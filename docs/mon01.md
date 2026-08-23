@@ -1,8 +1,8 @@
 # mon01 - Monitoring-Container
 
-Stand: 14-08-2026
+Stand: 23-08-2026
 
-LXC-Container für den Monitoring-Stack (Prometheus, Node-Exporter, PVE-Exporter, Grafana, Alertmanager). Stellt Sichtbarkeit auf Host-Ressourcen ('pve01') und Proxmox-VM-/Storage-Ebene her.
+LXC-Container für den Monitoring-Stack (Prometheus, Node-Exporter, PVE-Exporter, Grafana, Alertmanager). Stellt Sichtbarkeit auf Host-Ressourcen ('pve01') und Proxmox-VM-/Storage-Ebene her, sowie zentral durchsuchbare Logs beider Hosts.
 > Zu diesem Zeitpunkt konfiguriert bevor weitere Komponenten das Host-System zusätzlich belasten um die Ressourcen im Blick zu behalten.
 
 ## 🖥️ Aufbau / Konfiguration
@@ -73,12 +73,26 @@ Node-Exporter-Port (9100) und GPU-Exporter-Port (9835) auf `pve01` freigegeben, 
 
 - PVE-Exporter-Scraping in `prometheus.yml` benötigt `relabel_configs` (Proxy-Prinzip: ein Port, mehrere Ziele über `target`-Parameter) - reine `static_configs` reichen nicht.
 
+## 📜 Logging (Loki + Alloy)
+
+| Komponente | Version | Port | Läuft auf | Zweck |
+|---|---|---|---|---|
+| Loki | 3.7.6 | 3100 | `mon01` | Zentraler Log-Speicher, LogQL-Abfragen |
+| Alloy (`mon01`) | 1.18.1 | - | `mon01` | Liest lokales systemd-Journal, pusht an `localhost:3100` |
+| Alloy (`pve01`) | 1.18.1 | - | `pve01` | Liest lokales systemd-Journal, pusht an `mon01:3100` |
+
+> Storage-Typ: Filesystem (`/var/lib/loki`), Retention 168h (7 Tage), durchgesetzt über den Loki-Compactor. Kein Auth (`auth_enabled: false`). Absicherung ausschließlich über Firewall (LAN-intern, siehe unten).
+
+> Alloy pusht die Logs aktiv (umgekehrte Richtung zu Prometheus, das die Exporter aktiv abfragt), deshalb läuft auf beiden Hosts eine eigene Alloy-Instanz, jede liest nur ihr eigenes lokales Journal.
+
+Label-Set pro Log-Zeile: `host` (mon01/pve01), `job` (systemd-journal), `unit` (systemd-Service-Name, per Relabeling aus dem Journal-Metadatenfeld extrahiert), `service_name`, `detected_level`.
+
 ## 📈 Grafana
 
-Grafana 13.1.1, Port 3000. Prometheus als Datenquelle über `http://localhost:9090`.
+Grafana 13.1.1, Port 3000. Prometheus als Datenquelle über `http://localhost:9090`, Loki über `http://localhost:3100`
 
 Referenz-Dashboard "Node Exporter Full" (ID 1860) importiert.
-> Zusätzlich eigenes Dashboard "Homelab Overview" konfiguriert für einen schnellen Überblick über die wichtigsten Ressourcen und VMs/Container.
+> Zusätzlich eigenes Dashboard "Homelab Overview" konfiguriert für einen schnellen Überblick über die wichtigsten Ressourcen und VMs/Container. Log-Abfrage aktuell nur über Grafana "Explore".
 
 ### Alert-Regeln
 
@@ -100,14 +114,19 @@ Ports 22 (SSH), 9090 (Prometheus) und 3000 (Grafana) auf LAN-Subnetz beschränkt
 
 | Type | Action | Protocol | Source | D.Port | Log Level |
 |---|---|---|---|---|---|
-| in | ACCEPT | tcp | 192.168.178.0/24 | 22 | nolog | 
+| in | ACCEPT | tcp | 192.168.178.0/24 | 22 | nolog |
 | in | ACCEPT | tcp | 192.168.178.0/24 | 3000 | nolog |
 | in | ACCEPT | tcp | 192.168.178.0/24 | 9090 | nolog |
+| in | ACCEPT | tcp | 192.168.178.10 | 3100 | nolog |
 
-> Keine Client-IP-Einschränkung, da IPs per DHCP bezogen werden. Granularere Segmentierung vorgesehen für die geplante VLAN-Einführung.
+> Keine Client-IP-Einschränkung bei 22/3000/9090, da IPs per DHCP bezogen werden. Granularere Segmentierung vorgesehen für die geplante VLAN-Einführung. Port 3100 (Loki) ist Ausnahme: eng auf `pve01` als einzige erwartete Quelle beschränkt statt aufs ganze Subnetz, da nur Alloy von dort pusht.
 
 ## 📝 Offene Punkte
 
 - `verify_ssl: false` bei PVE-Exporter - eigene CA als saubere Lösung
 - Prometheus-Retention/Storage-Sizing noch nicht bewusst konfiguriert (Default (15 tage) aktiv)
 - Externes/unabhängiges Monitoring für `pve01`-Totalausfall
+- Logging bisher nur systemd-Journal. Keine Anwendungslogs, keine Proxmox-Task-Logs (/var/log/pve/tasks/)
+- Kein Log-Dashboard/keine Log-Alert-Regeln in Grafana, nur manuelle Abfrage über Explore
+- Retention-Löschung durch den Loki-Compactor (7 Tage) noch nicht über vollen Zyklus verifiziert
+- Alloy-Debug-UI (Port 12345) nicht firewalled, aktuell ungenutzt

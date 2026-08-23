@@ -45,6 +45,8 @@ Zentrale Überwachung von Host und Gastsystemen über Prometheus und Grafana. De
 | <img src="assets/logos/Proxmox.png" width="24"> | [Proxmox](https://www.proxmox.com/) | Virtualisierungsplattform |
 | <img src="assets/logos/Prometheus.png" width="24"> | [Prometheus](https://prometheus.io/) | Toolkit für Systemüberwachung und Alerting |
 | <img src="assets/logos/Grafana.png" width="24"> | [Grafana](https://grafana.com/) | Überwachungs-Oberfläche |
+| <img src="assets/logos/Loki.png" width="24"> | [Loki](https://grafana.com/oss/loki/) | Log-Aggregationssystem für zentrales, LAN-internes Logging |
+| <img src="assets/logos/Alloy.png" width="24"> | [Alloy](https://grafana.com/docs/alloy/) | Log-Sammler, liest lokale Logs und pusht sie an Loki |
 
 # 📁 Repo-Struktur
 
@@ -68,7 +70,8 @@ argus-homelab/
 |---|---|---|---|---|
 | 1 | Proxmox-Installation | ✅ Abgeschlossen | 09-08-2026 | [pve01.md](/docs/pve01.md) |
 | 2 | Monitoring-Stack | ✅ Abgeschlossen | 13-08-2026 | [mon01.md](/docs/mon01.md) |
-| 3 | Active Directory | ⏳ In Bearbeitung | - | 📝 in Bearbeitung |
+| 3 | Zentrales Logging | ✅ Abgeschlossen | 23-08-2026 | [mon01.md](/docs/mon01.md) |
+| 4 | Netzsegmentierung (pfSense) | ⏳ In Bearbeitung | - | 📝 in Bearbeitung |
 
 # 📬 Kontakt
 Bei Fragen, Anregungen, Tipps oder Anmerkungen erreichst du mich gerne über [LinkedIn](https://www.linkedin.com/in/stefan-höger-5a375a339/) oder [XING](https://www.xing.com/profile/Stefan_Hoeger049861/web_profiles?nwt_nav=profile).

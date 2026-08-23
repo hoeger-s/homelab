@@ -1,6 +1,6 @@
 # pve01 - Proxmox Host
 
-Stand: 14-08-2026
+Stand: 23-08-2026
 
 Basis-Hypervisor und Startpunkt für ARGUS. Trägt alle VMs/Container.
 
@@ -22,6 +22,7 @@ Basis-Hypervisor und Startpunkt für ARGUS. Trägt alle VMs/Container.
 > Für die GPU ist Stand 14-08-2026 kein Passthrough konfiguriert - Reserve für später (z. B. Ki-Container)
 
 ## 🌐 Netzwerk
+
 | Option | Value |
 |---|---|
 | Interface | eno1 |
@@ -33,6 +34,7 @@ Basis-Hypervisor und Startpunkt für ARGUS. Trägt alle VMs/Container.
 
 
 ## 💾 Storage-Layout
+
 | Storage | Medium | Content | Zweck |
 |---|---|---|---|
 | local | NVMe | ISO, Templates | Proxmox-Install-Default |
@@ -50,7 +52,14 @@ Basis-Hypervisor und Startpunkt für ARGUS. Trägt alle VMs/Container.
 - Eingehende Regeln: SSH (Port 22) und WebUI (Port 8006) nur aus 192.168.178.0/24
 - WebUI-Root-Login mit 2FA abgesichert
 
+## 📜 Logging (Alloy)
+
+Alloy 1.18.1 liest lokal das systemd-Journal und pusht es an Loki auf `mon01:3100` (Details siehe [mon01 - Monitoring-Container](mon01.md)).
+
+> Keine Firewall-Änderung auf `pve01` nötig, da nur ausgehender Traffic entsteht. Nicht von der Default-DROP-Policy betroffen.
+
 ## ✅ Verifikation
+
 Test-VM (VID 100) angelegt zur End-to-End-Prüfung:
 
 - Disk korrekt auf vm-storage (LVM-Thin) platziert
@@ -59,5 +68,6 @@ Test-VM (VID 100) angelegt zur End-to-End-Prüfung:
 - VM nach Test wieder entfernt (qm destroy 100)
 
 ## 📝 Offene Punkte
+
 - LVM-Thin-Feintuning (Übercommit-Verhalten, Monitoring der Pool-Auslastung)
 - Dedizierter WebUI-User inkl. 2FA mit eingeschränkten Rechten
