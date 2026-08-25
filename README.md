@@ -1,4 +1,5 @@
 # 🛡️ Stefans - Homelab [ARGUS]
+
 ARGUS ist der schrittweise Aufbau eines privaten Homelabs zu einer realitätsnahen Testumgebung, die typische Enterprise-Infrastruktur abbildet: Virtualisierung, Netzwerk, Windows-/Linux-Systeme, Monitoring und perspektivisch
 Security-Detection.
 Ziel ist es, eine private, praxisnahe Umgebung zum Lernen, Testen und Entwickeln aufzubauen, die langfristig verschiedene Szenarien aus den Bereichen IT-Infrastruktur und IT-Security ermöglicht.
@@ -9,9 +10,11 @@ Ziel ist es, eine private, praxisnahe Umgebung zum Lernen, Testen und Entwickeln
 > **Hinweis:** Dieses Repository befindet sich in aktiver Entwicklung. Dokumentation und README werden fortlaufend erweitert und aktualisiert. Es kann vorkommen, dass einzelne Komponenten bereits umgesetzt, aber noch nicht vollständig dokumentiert sind. Ich bemühe mich, den Stand zeitnah nachzuziehen.
 
 # 🖥️ Server
+
 Als Basis und zum Start des Projekts dient mein alter Gaming-PC als Virtualisierungshost. Die Hardware reicht für den aktuellen Scope aus, ohne dass eine Neuanschaffung nötig war. Für Backups und co. soll hier zeitnah ein NAS als zweiter Server folgen.
 
 ## 💻 Server 1 - Proxmox Node
+
 - CPU: Intel Core i7-9700K
 - RAM: G.Skill Trident Z 32 GB 3200mhz DDR4 (2 x 16 GB)
 - GPU: Zotac RTX 3070 Ti 8 GB VRAM
@@ -23,15 +26,17 @@ Als Basis und zum Start des Projekts dient mein alter Gaming-PC als Virtualisier
 - Gehäuse: Corsair Crystal 280X
 
 # 🌐 Netzwerk
-Aktuell läuft das Homelab über eine handelsübliche FRITZ!Box in einem klassischen Consumer-Heimnetz. Für den weiteren Ausbau ist eine Migration auf UniFi geplant, da dies technische Möglichkeiten wie z. B.:
-- VLAN-Segmentierung
-- IDS/IPS (Threat Management)
-- Client-/Netzwerk-Isolation
 
-ermöglicht.
-Die Migration wird ebenfalls dokumentiert und hier festgehalten. Bis dahin bleibt die FRITZ!Box die produktive Basis.
+**Hardware:**
+- UniFi Cloud Gateway Ultra
+- UniFi U7 Lite
+
+Das Heimnetz ist per VLAN in mehrere Bereiche unterteilt. Für ARGUS gibt es ein eigenes **Homelab-VLAN (`10.0.40.0/24`)**, logisch getrennt vom restlichen Heimnetz-Traffic.
+
+*(Feinere Firewall-Regeln zwischen den VLANs stehen noch aus.)*
 
 # 📈 Monitoring
+
 Zentrale Überwachung von Host und Gastsystemen über Prometheus und Grafana. Details siehe [mon01.md](/docs/mon01.md).
 
 ![Grafana-Dashboard](assets/screenshots/Grafana-Dashboard_v2.png)
@@ -47,6 +52,7 @@ Zentrale Überwachung von Host und Gastsystemen über Prometheus und Grafana. De
 | <img src="assets/logos/Grafana.png" width="24"> | [Grafana](https://grafana.com/) | Überwachungs-Oberfläche |
 | <img src="assets/logos/Loki.png" width="24"> | [Loki](https://grafana.com/oss/loki/) | Log-Aggregationssystem für zentrales, LAN-internes Logging |
 | <img src="assets/logos/Alloy.png" width="24"> | [Alloy](https://grafana.com/docs/alloy/) | Log-Sammler, liest lokale Logs und pusht sie an Loki |
+| <img src="assets/logos/UniFi.png" width="24"> | [UniFi](https://ui.com) | Netzwerk-Infrastruktur (Router, Access Point, VLAN-Segmentierung) |
 
 # 📁 Repo-Struktur
 
@@ -74,6 +80,7 @@ argus-homelab/
 | 4 | Netzsegmentierung (pfSense) | ⏳ In Bearbeitung | - | 📝 in Bearbeitung |
 
 # 📬 Kontakt
+
 Bei Fragen, Anregungen, Tipps oder Anmerkungen erreichst du mich gerne über [LinkedIn](https://www.linkedin.com/in/stefan-höger-5a375a339/) oder [XING](https://www.xing.com/profile/Stefan_Hoeger049861/web_profiles?nwt_nav=profile).
 
 Über Rückmeldungen und Austausch freue ich mich immer.
