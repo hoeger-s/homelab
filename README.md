@@ -31,9 +31,8 @@ Als Basis und zum Start des Projekts dient mein alter Gaming-PC als Virtualisier
 - UniFi Cloud Gateway Ultra
 - UniFi U7 Lite
 
-Das Heimnetz ist per VLAN in mehrere Bereiche unterteilt. Für ARGUS gibt es ein eigenes **Homelab-VLAN (`10.0.40.0/24`)**, logisch getrennt vom restlichen Heimnetz-Traffic.
-
-*(Feinere Firewall-Regeln zwischen den VLANs stehen noch aus.)*
+Das Heimnetz ist per VLAN in mehrere Bereiche unterteilt (Trusted, IoT, Gäste, Homelab). Für ARGUS gibt es ein eigenes **Homelab-VLAN (VLAN 40, `10.0.40.0/24`)**, über eine zonenbasierte Firewall vom restlichen Heimnetz getrennt: Das Homelab-Netz ist standardmäßig komplett isoliert,
+eine gezielte Regel erlaubt ausschließlich dem Trusted-Netz initiativen Zugriff. Umgekehrt kann das Homelab-Netz von sich aus nichts im übrigen Heimnetz erreichen.
 
 # 📈 Monitoring
 
