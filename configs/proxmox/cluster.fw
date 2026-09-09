@@ -1,0 +1,13 @@
+[OPTIONS]
+
+enable: 1
+
+[RULES]
+
+IN ACCEPT -source 10.0.40.11/32 -p tcp -dport 9835 -log nolog # GPU-Exporter-Zugriff für mon01
+IN ACCEPT -source 10.0.40.11/32 -p tcp -dport 22 -log nolog # SSH von mon01 (Backup-Transfer, eingeschränkter Key)
+IN ACCEPT -source 10.0.40.11/32 -p tcp -dport 9100 -log nolog # Node-Exporter-Scrape durch mon01
+IN ACCEPT -source 10.0.40.11/32 -p tcp -dport 8006 -log nolog # API-Zugriff für mon01 (PVE-Exporter)
+IN ACCEPT -source 10.0.10.0/24 -p tcp -dport 8006 -log nolog # WebUI nur aus Trusted-VLAN (Admin)
+IN ACCEPT -source 10.0.10.0/24 -p tcp -dport 22 -log nolog # SSH nur aus Trusted-VLAN (Admin)
+

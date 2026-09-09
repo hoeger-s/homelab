@@ -1,0 +1,58 @@
+groups:
+  - name: mon01-self-monitoring
+    rules:
+      - alert: MonitoringDiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/",job="node_exporter_mon01"} / node_filesystem_size_bytes{mountpoint="/",job="node_exporter_mon01"}) * 100 < 15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "mon01: Festplatte wird knapp"
+          description: "Weniger als 15% freier Speicher auf / (mon01)."
+
+  - name: pve01-infra
+    rules:
+      - alert: NodeExporterPve01Down
+        expr: up{job="node_exporter_pve01"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "pve01: Node-Exporter nicht erreichbar"
+          description: "up{job=\"node_exporter_pve01\"} ist seit mindestens 2 Minuten 0."
+
+      - alert: Pve01CpuHigh
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{instance="10.0.40.10:9100", mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "pve01: CPU-Auslastung hoch"
+          description: "CPU-Auslastung über 85% seit mindestens 5 Minuten."
+
+      - alert: Pve01RamHigh
+        expr: 100 - ((node_memory_MemAvailable_bytes{instance="10.0.40.10:9100"} / node_memory_MemTotal_bytes{instance="10.0.40.10:9100"}) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "pve01: RAM-Auslastung hoch"
+          description: "RAM-Auslastung über 85% seit mindestens 5 Minuten."
+
+      - alert: Pve01StoragePoolFull
+        expr: 100 * (pve_disk_usage_bytes{id=~"storage/.*"} / pve_disk_size_bytes{id=~"storage/.*"}) > 85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "pve01: Storage-Pool {{ $labels.id }} fast voll"
+          description: "Über 85% belegt seit mindestens 10 Minuten."
+
+      - alert: Pve01GpuHigh
+        expr: nvidia_smi_utilization_gpu_ratio{instance="10.0.40.10:9835"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "pve01: GPU-Auslastung hoch"
+          description: "GPU-Auslastung über 85% seit mindestens 5 Minuten."
