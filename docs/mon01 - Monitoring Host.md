@@ -1,4 +1,4 @@
-<img src="assets/logos/Grafana.png" width="24"> mon01 - Monitoring Host
+# mon01 - Monitoring Host
 
 Stand: 04.09.2026
 

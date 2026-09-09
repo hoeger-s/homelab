@@ -1,4 +1,4 @@
-<img src="assets/logos/Proxmox.png" width="24"> pve01 - Proxmox Host
+# pve01 - Proxmox Host
 
 Stand: 31.08.2026
 
