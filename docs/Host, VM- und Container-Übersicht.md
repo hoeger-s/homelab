@@ -10,4 +10,4 @@
 
 | Name | Host | VMID/CTID | OS | Zweck | Typ | Domain | IP-Adresse | Netz | vCPU | RAM | Disk | Status | Notizen |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| `argus-fw-edge` | `pve01` | 101 | pfSense CE | Edge-Firewall | VM | argus.lab | WAN `10.0.40.12`, LAN `10.0.100.1` | Homelab-VLAN (WAN) / Mgmt `10.0.100.0/24` (LAN) | 2 | 2048 MB | 20 GB | Running | - |
