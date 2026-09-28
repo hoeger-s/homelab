@@ -1,0 +1,15 @@
+[OPTIONS]
+enable: 1
+policy_in: DROP
+policy_out: DROP
+
+[RULES]
+IN SSH(ACCEPT) -source 10.0.10.0/24
+IN ACCEPT -p tcp -dport 443 -source 10.0.10.0/24
+IN ACCEPT -p tcp -dport 80 -source 10.0.10.0/24
+IN ACCEPT -p tcp -dport 443 -source 192.168.2.0/24
+OUT ACCEPT -p udp -dport 53
+OUT ACCEPT -p tcp -dport 53
+OUT ACCEPT -p udp -dport 123
+OUT ACCEPT -p tcp -dport 443
+OUT ACCEPT -p tcp -dport 80

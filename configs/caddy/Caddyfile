@@ -1,0 +1,24 @@
+# /etc/caddy/Caddyfile auf proxy01
+# Der deSEC-Token kommt aus /etc/caddy/desec.env (nicht im Repo)
+
+*.home.<domain> {
+	tls {
+		dns desec {
+			token {env.DESEC_TOKEN}
+		}
+		# deSEC verteilt neue Einträge mit Verzögerung, Let's Encrypt prüft von mehreren Standorten
+		propagation_delay 60s
+		propagation_timeout -1
+	}
+
+	# Muster für einen angebundenen Dienst:
+	# @dienst host dienst.home.<domain>
+	# handle @dienst {
+	# 	reverse_proxy <ip>:<port>
+	# }
+
+	# Unbekannte Namen sofort abweisen
+	handle {
+		abort
+	}
+}

@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 04.09.2026
+Stand: 28.09.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs, trägt den kompletten Docker-Compose-basierten Monitoring-Stack (Prometheus, Grafana, Loki, Alloy, PVE-Exporter, Alertmanager, Node-Exporter) für sich selbst und `pve01`.
@@ -154,7 +154,7 @@ scp -O -i ~/.ssh/pve01-backup /tmp/mon01-config_<datum>.tar.gz <admin-user>@10.0
 
 ## 📝 Offene Punkte
 
-- `verify_ssl: false` beim PVE-Exporter ablösen (eigene CA einrichten)
+- `verify_ssl: false` beim PVE-Exporter ablösen: Proxmox-API über `proxy01` mit gültigem Zertifikat ansprechen statt eigener CA
 - Docker-Image-Versionen pinnen statt `:latest`
 - Eigenes Self-Monitoring-Dashboard für `mon01` bauen
 - Zusätzliche Log-Quellen erschließen (Proxmox-Task-Logs, Anwendungslogs)

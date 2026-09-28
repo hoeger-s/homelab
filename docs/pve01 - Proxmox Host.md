@@ -1,8 +1,8 @@
 # pve01 - Proxmox Host
 
-Stand: 31.08.2026
+Stand: 28.09.2026
 
-Basis-Hypervisor des Homelabs. Trägt alle VMs und Container.
+Basis-Hypervisor des Homelabs. Trägt alle VMs und Container, Übersicht siehe [Host, VM- und Container-Übersicht](Host,%20VM-%20und%20Container-%C3%9Cbersicht.md).
 
 
 ## 🖥️ Hardware
@@ -21,7 +21,7 @@ Basis-Hypervisor des Homelabs. Trägt alle VMs und Container.
 | Zusatz-Storage 2 | WD Blue HDD 2TB SATA |
 | Proxmox VE | Version 9 (Debian 13/Trixie) |
 
-> Für die GPU ist Stand 31.08.2026 kein Passthrough konfiguriert - Reserve für später (z. B. KI-Container)
+> GPU wird per Device-Freigabe (`devX`, Proxmox 9) an einen LXC durchgereicht, kein VM-Passthrough.
 
 
 ## 🌐 Netzwerk
@@ -56,7 +56,7 @@ lvcreate -l 96%FREE -T vg-vmdata/vmdata-thin
 - Zeroing aktiv (Proxmox-Default)
 - Autoextend deaktiviert (Proxmox-Default)
     - `-l 96%FREE` statt `-l 100%FREE` für 4% Headroom in der VG `vg-vmdata`
-    - Grafana-Alert `Pve01StoragePoolFull` siehe [mon01 - Monitoring Host](mon01 - Monitoring Host.md)
+    - Grafana-Alert `Pve01StoragePoolFull` siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md)
     - Headroom bei Bedarf per `lvextend` manuell zum Pool hinzufügen
 
 
@@ -89,6 +89,8 @@ lvcreate -l 96%FREE -T vg-vmdata/vmdata-thin
 
 > Admin-Zugriff nur aus dem Trusted-VLAN, `mon01`-Zugriff nur von dessen fester IP-Adresse statt dem ganzen Homelab-VLAN.
 
+Zusätzlich hat jeder Container eine eigene Proxmox-Gast-Firewall mit Default-Policy `DROP` in beide Richtungen (z. B. [proxy01 - Reverse Proxy](proxy01%20-%20Reverse%20Proxy.md)). Die Regeln liegen auf `pve01` unter `/etc/pve/firewall/<CTID>.fw`.
+
 
 ## 📊 Monitoring
 
@@ -99,7 +101,7 @@ Läuft nativ auf `pve01`, wird von `mon01`s zentralem Prometheus/Grafana-Stack g
 | Node-Exporter | 1.12.1 | 9100 | OS-Metriken (CPU, RAM, Disk, Netzwerk) |
 | NVIDIA-GPU-Exporter | 1.13.1 | 9835 | GPU-Metriken (Temperatur, Auslastung, VRAM) |
 
-Beide Exporter laufen als eigene systemd-Services mit dediziertem System-User (nicht login-fähig). Der volle Monitoring-Stack (Prometheus/Grafana/Loki/Alertmanager, Alert-Regeln) läuft auf [mon01 - Monitoring Host](mon01 - Monitoring Host.md).
+Beide Exporter laufen als eigene systemd-Services mit dediziertem System-User (nicht login-fähig). Der volle Monitoring-Stack (Prometheus/Grafana/Loki/Alertmanager, Alert-Regeln) läuft auf [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md).
 
 > Voraussetzung für GPU-Exporter: NVIDIA-Treiber `595.91.07` (`--dkms`), `nouveau` geblacklistet, da der Treiber nach einem Reboot sonst nicht lädt.
 
@@ -108,7 +110,7 @@ Zusätzlich läuft ein PVE-Exporter als Docker-Container auf `mon01` und fragt �
 
 ## 📜 Logging (Alloy)
 
-Alloy (v1.19.2) liest lokal das `systemd-Journal` und pusht per `loki.source.journal` an Loki auf `mon01:3100` (Details siehe [mon01 - Monitoring Host](mon01 - Monitoring Host.md)).
+Alloy (v1.19.2) liest lokal das `systemd-Journal` und pusht per `loki.source.journal` an Loki auf `mon01:3100` (Details siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md)).
 Job-Label `systemd-journal` wird per `loki.relabel` erzwungen, sonst überschreibt Alloy es automatisch mit dem Component-Namen.
 
 > Da für Alloy nur ausgehender Traffic entsteht, ist keine Firewall-Änderung notwendig (nicht von Default-DROP-Policy betroffen)
@@ -125,6 +127,5 @@ Bei komplettem Host-Ausfall: gleiche Wiederherstellung nach einer frischen Proxm
 
 ## 📝 Offene Punkte
 
-- GPU-Passthrough konfigurieren
 - Backup auf externes NAS auslagern
-- `verify_ssl: false` beim PVE-Exporter ablösen (eigene CA einrichten)
+- `verify_ssl: false` beim PVE-Exporter ablösen: Proxmox-API über `proxy01` mit gültigem Zertifikat ansprechen statt eigener CA
