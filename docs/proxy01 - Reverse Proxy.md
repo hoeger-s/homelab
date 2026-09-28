@@ -86,11 +86,13 @@ Unbekannte Namen werden per `abort` sofort abgewiesen.
 
 ## 💾 Backup
 
-Proxmox-Snapshots an jedem Meilenstein des Aufbaus. Die Firewall-Regeln (`/etc/pve/firewall/120.fw`) liegen auf dem Host und sind nicht Teil der Container-Snapshots.
+Container-Backup per `vzdump` auf `pve01`s `hdd-backup`. Das sichert den kompletten Container inkl. Konfiguration und Zertifikaten, Restore mit einem einzigen `pct restore`. Zusätzlich Proxmox-Snapshots an jedem Meilenstein des Aufbaus, die aber auf demselben Storage wie der Container liegen und kein Backup ersetzen.
+
+Die Firewall-Regeln (`/etc/pve/firewall/120.fw`) liegen auf dem Host und sind im Config-Backup von `pve01` enthalten.
 
 
 ## 📝 Offene Punkte
 
 - Weitere Dienste anbinden (Radicale, Grafana)
-- Config-Backup analog zu `mon01` (Caddyfile, systemd-Drop-in, SSH-Drop-in) auf `pve01`s `hdd-backup`
+- Geplanten `vzdump`-Backup-Job einrichten (aktuell manuell angestoßen)
 - Monitoring von `proxy01` (Node-Exporter, Zertifikats-Ablauf als Alert)
