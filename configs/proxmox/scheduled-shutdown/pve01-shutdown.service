@@ -1,0 +1,6 @@
+[Unit]
+Description=pve01 geplant herunterfahren (RTC-Weckzeit setzen)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pve01-scheduled-shutdown.sh

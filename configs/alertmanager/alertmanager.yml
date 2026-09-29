@@ -1,0 +1,23 @@
+# /opt/monitoring/alertmanager/alertmanager.yml auf mon01
+route:
+  receiver: 'default'
+  routes:
+    # pve01 laeuft nicht 24/7 (Zeitschaltung: aus Di-So 00:00 / Mo 01:00, an 08:00)
+    - matchers:
+        - alertname =~ "NodeExporterPve01Down|Pve01.*"
+      receiver: 'default'
+      mute_time_intervals:
+        - pve01-offline
+
+receivers:
+  - name: 'default'
+
+time_intervals:
+  - name: pve01-offline
+    time_intervals:
+      - times:
+          - start_time: '23:55'
+            end_time: '24:00'
+          - start_time: '00:00'
+            end_time: '08:15'
+        location: 'Europe/Berlin'

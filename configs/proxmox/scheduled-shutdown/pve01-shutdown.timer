@@ -1,0 +1,11 @@
+[Unit]
+Description=Zeitschaltung pve01: Di-So 00:00, Mo 01:00 (Backup-Fenster So-Nacht)
+
+[Timer]
+OnCalendar=Tue..Sun *-*-* 00:00:00
+OnCalendar=Mon *-*-* 01:00:00
+# Bewusst kein Nachholen: sonst faehrt der Host nach dem Einschalten sofort wieder herunter
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,14 @@
+[OPTIONS]
+enable: 1
+policy_in: DROP
+policy_out: DROP
+
+[RULES]
+IN SSH(ACCEPT) -source 10.0.10.0/24 # Admin aus Trusted
+IN ACCEPT -p tcp -dport 5232 -source 10.0.40.13 # proxy01 (caddy) Zugriff
+IN ACCEPT -p tcp -dport 5232 -source 10.0.10.0/24 # Radicale direkt aus Trusted (Rueckfallweg)
+OUT ACCEPT -p udp -dport 53 # DNS
+OUT ACCEPT -p tcp -dport 53 # DNS
+OUT ACCEPT -p udp -dport 123 # Zeit
+OUT ACCEPT -p tcp -dport 443 # Updates
+OUT ACCEPT -p tcp -dport 80 # Updates

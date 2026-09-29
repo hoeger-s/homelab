@@ -13,3 +13,4 @@ OUT ACCEPT -p tcp -dport 53
 OUT ACCEPT -p udp -dport 123
 OUT ACCEPT -p tcp -dport 443
 OUT ACCEPT -p tcp -dport 80
+OUT ACCEPT -p tcp -dport 5232 -dest 10.0.40.14 # zu cal01 (radicale)
