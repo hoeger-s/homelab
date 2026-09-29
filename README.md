@@ -53,6 +53,11 @@ Alle Web-Dienste laufen hinter einem zentralen Reverse Proxy ([Caddy](https://ca
 Von unterwegs geht der Zugriff ausschließlich über das WireGuard-VPN des Gateways. Die VPN-Zone darf dabei nur den Reverse Proxy erreichen, nicht das restliche Homelab. Details siehe [proxy01 - Reverse Proxy](/docs/proxy01%20-%20Reverse%20Proxy.md).
 
 
+# 📅 Kalender, Aufgaben & Kontakte
+
+Kalender, Aufgaben und Kontakte laufen selbst gehostet über [Radicale](https://radicale.org/) (CalDAV/CardDAV) in einem eigenen LXC, von den Geräten über den Reverse Proxy erreichbar (HTTPS). iOS und Thunderbird synchronisieren direkt, ohne Cloud-Anbieter dazwischen. Details siehe [cal01 - Kalender Server](/docs/cal01%20-%20Kalender%20Server.md).
+
+
 # 📈 Monitoring
 
 Zentrale Überwachung von Host und Gastsystemen über Prometheus und Grafana. Details siehe [mon01 - Monitoring Host](/docs/mon01%20-%20Monitoring%20Host.md).
@@ -77,28 +82,17 @@ Zentrale Überwachung von Host und Gastsystemen über Prometheus und Grafana. De
 | <img src="assets/logos/Caddy.png" width="24"> | [Caddy](https://caddyserver.com/) | Reverse Proxy mit automatischem HTTPS |
 | <img src="assets/logos/LetsEncrypt.png" width="24"> | [Let's Encrypt](https://letsencrypt.org/) | Kostenlose, öffentlich vertrauenswürdige TLS-Zertifikate |
 | <img src="assets/logos/WireGuard.png" width="24"> | [WireGuard](https://www.wireguard.com/) | VPN für den Fernzugriff |
+| <img src="assets/logos/Radicale.png" width="24"> | [Radicale](https://radicale.org/) | CalDAV-/CardDAV-Server für Kalender, Aufgaben und Kontakte |
 
 
 # 📁 Repo-Struktur
 
 ```
 homelab/
-├── README.md                       # Projektüberblick
-├── assets/
-│   ├── images/
-│   ├── logos/
-│   └── screenshots/
-├── configs/                        # Caddy-, Grafana-, Prometheus- und Proxmox-Konfigurationen
-│   ├── caddy/
-│   ├── grafana/
-│   ├── prometheus/
-│   └── proxmox/
-└── docs/                           # Technische Komponenten-Doku (Konfigurationen, relevante Befehle, offene Punkte, etc.)
-    ├── Host, VM- und Container-Übersicht.md
-    ├── pve01 - Proxmox Host.md
-    ├── mon01 - Monitoring Host.md
-    └── proxy01 - Reverse Proxy.md
-
+├── README.md       # Projektüberblick
+├── assets/         # Bilder, Logos, Screenshots
+├── configs/        # Konfigurationsdateien der Dienste (Configuration as Code)
+└── docs/           # Technische Komponenten-Doku, siehe Tabelle unten
 ```
 
 
@@ -110,6 +104,7 @@ homelab/
 | Proxmox-Host | [pve01 - Proxmox Host](/docs/pve01%20-%20Proxmox%20Host.md) |
 | Monitoring & Logging | [mon01 - Monitoring Host](/docs/mon01%20-%20Monitoring%20Host.md) |
 | Reverse Proxy & TLS | [proxy01 - Reverse Proxy](/docs/proxy01%20-%20Reverse%20Proxy.md) |
+| Kalender, Aufgaben & Kontakte | [cal01 - Kalender Server](/docs/cal01%20-%20Kalender%20Server.md) |
 
 
 # 📬 Kontakt

@@ -11,3 +11,4 @@
 | Name | Host | VMID/CTID | OS | Zweck | Typ | Domain | IP-Adresse | Netz | vCPU | RAM | Disk | Status | Notizen |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `proxy01` | `pve01` | 120 | Debian 13 (trixie) | Reverse Proxy | LXC | `stefan.lab` | `10.0.40.13` | Homelab (`10.0.40.0/24`) | 1 | 512 MB | 4 GB | Running | Wildcard-Zertifikat `*.home.<domain>`, siehe [proxy01 - Reverse Proxy](proxy01%20-%20Reverse%20Proxy.md) |
+| `cal01` | `pve01` | 121 | Debian 13 (trixie) | Kalender Server | LXC | `stefan.lab` | `10.0.40.14` | Homelab (`10.0.40.0/24`) | 1 | 512 MB | 8 GB | Running | Radicale (CalDAV/CardDAV), erreichbar über `cal.home.<domain>`, siehe [cal01 - Kalender Server](cal01%20-%20Kalender%20Server.md) |
