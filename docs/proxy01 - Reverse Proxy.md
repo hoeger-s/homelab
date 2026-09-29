@@ -1,6 +1,6 @@
 # proxy01 - Reverse Proxy
 
-Stand: 28.09.2026
+Stand: 29.09.2026
 
 Zentraler Reverse-Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<domain>` entgegen, terminiert TLS mit einem öffentlich vertrauenswürdigen Let's-Encrypt-Wildcard-Zertifikat und reicht sie an die jeweiligen Dienste weiter. Kein Dienst ist aus dem Internet erreichbar, Zugriff von unterwegs nur über WireGuard-VPN.
 
@@ -16,7 +16,7 @@ Zentraler Reverse-Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<doma
 | vCPU | 1 |
 | RAM / Swap | 512 MB / 256 MB |
 | Disk | 4 GB (`vm-storage`) |
-| Autostart | ja (`onboot`) |
+| Autostart | ja (`onboot`, `order=1,up=15`) |
 
 
 ## 🌐 Netzwerk
@@ -47,6 +47,7 @@ Zentraler Reverse-Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<doma
 | out | ACCEPT | udp/tcp | 53 | any | DNS |
 | out | ACCEPT | udp | 123 | any | NTP |
 | out | ACCEPT | tcp | 80, 443 | any | Paketquellen, Let's Encrypt, deSEC-API, Backends |
+| out | ACCEPT | tcp | 5232 | 10.0.40.14 | Radicale-Backend (cal01) |
 
 Regeldatei: [`configs/proxmox/120.fw`](../configs/proxmox/120.fw)
 
@@ -79,20 +80,24 @@ Installiert aus dem offiziellen Caddy-APT-Repo, danach durch einen Custom-Build 
 
 Konfiguration: [`configs/caddy/Caddyfile`](../configs/caddy/Caddyfile)
 
-**Angebundene Dienste:** werden hier ergänzt, sobald sie im Repo dokumentiert sind.
+**Angebundene Dienste:**
+
+| Name | Ziel | Dienst |
+|---|---|---|
+| `cal.home.<domain>` | `10.0.40.14:5232` (HTTP) | Radicale auf [cal01](cal01%20-%20Kalender%20Server.md) |
 
 Unbekannte Namen werden per `abort` sofort abgewiesen.
 
 
 ## 💾 Backup
 
-Container-Backup per `vzdump` auf `pve01`s `hdd-backup`. Das sichert den kompletten Container inkl. Konfiguration und Zertifikaten, Restore mit einem einzigen `pct restore`. Zusätzlich Proxmox-Snapshots an jedem Meilenstein des Aufbaus, die aber auf demselben Storage wie der Container liegen und kein Backup ersetzen.
+Container-Backup per `vzdump` auf `pve01`s `hdd-backup`. Das sichert den kompletten Container inkl. Konfiguration und Zertifikaten, Restore mit einem einzigen `pct restore`. Geplanter Job (zusammen mit `cal01`): wöchentlich `mon 00:05` (Backup-Fenster in der Nacht So->Mo, siehe Zeitschaltung `pve01`), letzte 4 Sicherungen behalten, verpasste Läufe werden beim nächsten Start nachgeholt. Job-Definition: [`configs/proxmox/jobs.cfg`](../configs/proxmox/jobs.cfg)
+Zusätzlich Proxmox-Snapshots an jedem Meilenstein des Aufbaus, die aber auf demselben Storage wie der Container liegen und kein Backup ersetzen.
 
 Die Firewall-Regeln (`/etc/pve/firewall/120.fw`) liegen auf dem Host und sind im Config-Backup von `pve01` enthalten.
 
 
 ## 📝 Offene Punkte
 
-- Weitere Dienste anbinden (Radicale, Grafana)
-- Geplanten `vzdump`-Backup-Job einrichten (aktuell manuell angestoßen)
+- Weitere Dienste anbinden (Grafana)
 - Monitoring von `proxy01` (Node-Exporter, Zertifikats-Ablauf als Alert)
