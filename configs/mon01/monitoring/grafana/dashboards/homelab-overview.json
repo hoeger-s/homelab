@@ -2,27 +2,41 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "laqfn4v"
+    "name": "laqfn4v",
+    "namespace": "default",
+    "uid": "c747325e-8922-4ab9-8bf1-fd7ea9756c14",
+    "resourceVersion": "1793025686964999",
+    "generation": 39,
+    "creationTimestamp": "2026-09-02T09:05:58Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "901923201929216"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:dfwqx807a524gf",
+      "grafana.app/saved-from-ui": "Grafana v13.2.1 (56cd3e9288)",
+      "grafana.app/updatedBy": "user:dfwqx807a524gf",
+      "grafana.app/updatedTimestamp": "2026-10-26T14:41:26Z"
+    }
   },
   "spec": {
     "annotations": [
       {
         "kind": "AnnotationQuery",
         "spec": {
-          "builtIn": true,
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": {
+              "name": "-- Grafana --"
+            },
+            "spec": {}
+          },
           "enable": true,
           "hide": true,
           "iconColor": "rgba(0, 211, 255, 1)",
           "name": "Annotations & Alerts",
-          "query": {
-            "datasource": {
-              "name": "-- Grafana --"
-            },
-            "group": "grafana",
-            "kind": "DataQuery",
-            "spec": {},
-            "version": "v0"
-          }
+          "builtIn": true
         }
       }
     ],
@@ -32,27 +46,23 @@
       "panel-1": {
         "kind": "Panel",
         "spec": {
+          "id": 1,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 1,
-          "links": [],
-          "title": "",
-          "transparent": true,
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -61,15 +71,23 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; height: 50px; font-size: 24px;\">\r\nHomelab Overview\r\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
-          }
+            }
+          },
+          "transparent": true
         }
       },
       "panel-10": {
         "kind": "Panel",
         "spec": {
+          "id": 10,
+          "title": "MEMORY",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -77,67 +95,34 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "100 * (1 - (node_memory_MemAvailable_bytes{instance=\"10.0.40.10:9100\"} / node_memory_MemTotal_bytes{instance=\"10.0.40.10:9100\"}))",
+                        "expr": "100 * (1 - (node_memory_MemAvailable_bytes{instance=\"pve01\"} / node_memory_MemTotal_bytes{instance=\"pve01\"}))",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 10,
-          "links": [],
-          "title": "MEMORY",
           "vizConfig": {
-            "group": "gauge",
             "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "fixedColor": "red",
-                    "mode": "thresholds"
-                  },
-                  "decimals": 2,
-                  "max": 100,
-                  "min": 0,
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "#EAB839",
-                        "value": 75
-                      },
-                      {
-                        "color": "red",
-                        "value": 90
-                      }
-                    ]
-                  },
-                  "unit": "percent"
-                },
-                "overrides": []
-              },
               "options": {
                 "barShape": "rounded",
                 "barWidthFactor": 0.25,
@@ -165,15 +150,48 @@
                 "sizing": "auto",
                 "sparkline": true,
                 "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 2,
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 75,
+                        "color": "#EAB839"
+                      },
+                      {
+                        "value": 90,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds",
+                    "fixedColor": "red"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-11": {
         "kind": "Panel",
         "spec": {
+          "id": 11,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -181,42 +199,61 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "100 * (1 - (node_memory_MemAvailable_bytes{instance=\"10.0.40.10:9100\"} / node_memory_MemTotal_bytes{instance=\"10.0.40.10:9100\"}))",
+                        "expr": "100 * (1 - (node_memory_MemAvailable_bytes{instance=\"pve01\"} / node_memory_MemTotal_bytes{instance=\"pve01\"}))",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 11,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "timeseries",
             "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
               "fieldConfig": {
                 "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
-                    "fixedColor": "#5794f2",
-                    "mode": "fixed"
+                    "mode": "fixed",
+                    "fixedColor": "#5794f2"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -254,60 +291,34 @@
                     "thresholdsStyle": {
                       "mode": "off"
                     }
-                  },
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
                   }
                 },
                 "overrides": []
-              },
-              "options": {
-                "legend": {
-                  "calcs": [],
-                  "displayMode": "list",
-                  "placement": "bottom",
-                  "showLegend": false
-                },
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
-                }
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-12": {
         "kind": "Panel",
         "spec": {
+          "id": 12,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 12,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -316,15 +327,22 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; justify-content: center; height: 50px; font-size: 20px;\">\nG.Skill Trident Z 32GB 3200MHz DDR4\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-13": {
         "kind": "Panel",
         "spec": {
+          "id": 13,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -332,84 +350,101 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "node_memory_MemTotal_bytes{instance=\"10.0.40.10:9100\"} - node_memory_MemAvailable_bytes{instance=\"10.0.40.10:9100\"}",
+                        "expr": "node_memory_MemTotal_bytes{instance=\"pve01\"} - node_memory_MemAvailable_bytes{instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "node_memory_MemTotal_bytes{instance=\"10.0.40.10:9100\"}",
+                        "expr": "node_memory_MemTotal_bytes{instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "B"
+                    "refId": "B",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 13,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "vertical",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": true
+                },
+                "showPercentChange": false,
+                "text": {
+                  "valueSize": 25
+                },
+                "textMode": "value_and_name",
+                "wideLayout": true
+              },
               "fieldConfig": {
                 "defaults": {
-                  "color": {
-                    "fixedColor": "#808080",
-                    "mode": "fixed"
-                  },
+                  "unit": "decbytes",
                   "decimals": 2,
-                  "fieldMinMax": false,
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
                       {
-                        "color": "green",
-                        "value": 0
+                        "value": 0,
+                        "color": "green"
                       },
                       {
-                        "color": "red",
-                        "value": 80
+                        "value": 80,
+                        "color": "red"
                       }
                     ]
                   },
-                  "unit": "decbytes"
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "#808080"
+                  },
+                  "fieldMinMax": false
                 },
                 "overrides": [
                   {
@@ -437,35 +472,18 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "colorMode": "none",
-                "graphMode": "none",
-                "justifyMode": "auto",
-                "orientation": "vertical",
-                "percentChangeColorMode": "standard",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": true
-                },
-                "showPercentChange": false,
-                "text": {
-                  "valueSize": 25
-                },
-                "textMode": "value_and_name",
-                "wideLayout": true
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-14": {
         "kind": "Panel",
         "spec": {
+          "id": 14,
+          "title": "STORAGE",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -473,67 +491,34 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "expr": "pve_disk_usage_bytes{id=\"storage/pve01/vm-storage\"} / pve_disk_size_bytes{id=\"storage/pve01/vm-storage\"} * 100",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 14,
-          "links": [],
-          "title": "STORAGE",
           "vizConfig": {
-            "group": "gauge",
             "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "fixedColor": "red",
-                    "mode": "thresholds"
-                  },
-                  "decimals": 2,
-                  "max": 100,
-                  "min": 0,
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "#EAB839",
-                        "value": 70
-                      },
-                      {
-                        "color": "red",
-                        "value": 85
-                      }
-                    ]
-                  },
-                  "unit": "percent"
-                },
-                "overrides": []
-              },
               "options": {
                 "barShape": "rounded",
                 "barWidthFactor": 0.25,
@@ -561,15 +546,48 @@
                 "sizing": "auto",
                 "sparkline": true,
                 "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 2,
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 70,
+                        "color": "#EAB839"
+                      },
+                      {
+                        "value": 85,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds",
+                    "fixedColor": "red"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-15": {
         "kind": "Panel",
         "spec": {
+          "id": 15,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -577,42 +595,61 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum(irate(node_disk_read_bytes_total{instance=\"10.0.40.10:9100\",device=\"sda\"}[5m]) + irate(node_disk_written_bytes_total{instance=\"10.0.40.10:9100\",device=\"sda\"}[5m]))",
+                        "expr": "sum(irate(node_disk_read_bytes_total{instance=\"pve01\",device=\"sda\"}[5m]) + irate(node_disk_written_bytes_total{instance=\"pve01\",device=\"sda\"}[5m]))",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 15,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "timeseries",
             "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
               "fieldConfig": {
                 "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
-                    "fixedColor": "#5794f2",
-                    "mode": "fixed"
+                    "mode": "fixed",
+                    "fixedColor": "#5794f2"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -650,60 +687,34 @@
                     "thresholdsStyle": {
                       "mode": "off"
                     }
-                  },
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
                   }
                 },
                 "overrides": []
-              },
-              "options": {
-                "legend": {
-                  "calcs": [],
-                  "displayMode": "list",
-                  "placement": "bottom",
-                  "showLegend": false
-                },
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
-                }
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-16": {
         "kind": "Panel",
         "spec": {
+          "id": 16,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 16,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -712,15 +723,22 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; justify-content: center; height: 50px; font-size: 20px;\">\nSanDisk SSD 2 TB SATA\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-17": {
         "kind": "Panel",
         "spec": {
+          "id": 17,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -728,13 +746,13 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -742,22 +760,22 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -765,47 +783,64 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "B"
+                    "refId": "B",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 17,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "vertical",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": true
+                },
+                "showPercentChange": false,
+                "text": {
+                  "valueSize": 25
+                },
+                "textMode": "value_and_name",
+                "wideLayout": true
+              },
               "fieldConfig": {
                 "defaults": {
-                  "color": {
-                    "fixedColor": "#808080",
-                    "mode": "fixed"
-                  },
+                  "unit": "decbytes",
                   "decimals": 2,
-                  "fieldMinMax": false,
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
                       {
-                        "color": "green",
-                        "value": 0
+                        "value": 0,
+                        "color": "green"
                       },
                       {
-                        "color": "red",
-                        "value": 80
+                        "value": 80,
+                        "color": "red"
                       }
                     ]
                   },
-                  "unit": "decbytes"
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "#808080"
+                  },
+                  "fieldMinMax": false
                 },
                 "overrides": [
                   {
@@ -833,35 +868,18 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "colorMode": "none",
-                "graphMode": "none",
-                "justifyMode": "auto",
-                "orientation": "vertical",
-                "percentChangeColorMode": "standard",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": true
-                },
-                "showPercentChange": false,
-                "text": {
-                  "valueSize": 25
-                },
-                "textMode": "value_and_name",
-                "wideLayout": true
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-18": {
         "kind": "Panel",
         "spec": {
+          "id": 18,
+          "title": "NETWORK",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -869,78 +887,95 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "irate(node_network_receive_bytes_total{instance=\"10.0.40.10:9100\",device=\"vmbr0\"}[5m])",
+                        "expr": "irate(node_network_receive_bytes_total{instance=\"pve01\",device=\"vmbr0\"}[5m])",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "irate(node_network_transmit_bytes_total{instance=\"10.0.40.10:9100\",device=\"vmbr0\"}[5m])",
+                        "expr": "irate(node_network_transmit_bytes_total{instance=\"pve01\",device=\"vmbr0\"}[5m])",
                         "instant": false,
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "B"
+                    "refId": "B",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 18,
-          "links": [],
-          "title": "NETWORK",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "vertical",
+                "percentChangeColorMode": "same_as_value",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "showPercentChange": true,
+                "text": {
+                  "valueSize": 40
+                },
+                "textMode": "value_and_name",
+                "wideLayout": true
+              },
               "fieldConfig": {
                 "defaults": {
-                  "color": {
-                    "fixedColor": "#33b2cd",
-                    "mode": "fixed"
-                  },
+                  "unit": "Bps",
                   "decimals": 2,
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
                       {
-                        "color": "green",
-                        "value": 0
+                        "value": 0,
+                        "color": "green"
                       }
                     ]
                   },
-                  "unit": "Bps"
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "#33b2cd"
+                  }
                 },
                 "overrides": [
                   {
@@ -982,35 +1017,18 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "colorMode": "value",
-                "graphMode": "none",
-                "justifyMode": "center",
-                "orientation": "vertical",
-                "percentChangeColorMode": "same_as_value",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": false
-                },
-                "showPercentChange": true,
-                "text": {
-                  "valueSize": 40
-                },
-                "textMode": "value_and_name",
-                "wideLayout": true
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-19": {
         "kind": "Panel",
         "spec": {
+          "id": 19,
+          "title": "NETWORK",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -1018,66 +1036,88 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "irate(node_network_receive_bytes_total{instance=\"10.0.40.10:9100\",device=\"vmbr0\"}[5m])",
+                        "expr": "irate(node_network_receive_bytes_total{instance=\"pve01\",device=\"vmbr0\"}[5m])",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "irate(node_network_transmit_bytes_total{instance=\"10.0.40.10:9100\",device=\"vmbr0\"}[5m])",
+                        "expr": "irate(node_network_transmit_bytes_total{instance=\"pve01\",device=\"vmbr0\"}[5m])",
                         "instant": false,
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "B"
+                    "refId": "B",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 19,
-          "links": [],
-          "title": "NETWORK",
           "vizConfig": {
-            "group": "timeseries",
             "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "enableFacetedFilter": false,
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
               "fieldConfig": {
                 "defaults": {
+                  "unit": "Bps",
+                  "decimals": 2,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
-                    "fixedColor": "#33b2cd",
-                    "mode": "fixed"
+                    "mode": "fixed",
+                    "fixedColor": "#33b2cd"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -1112,18 +1152,7 @@
                     "thresholdsStyle": {
                       "mode": "off"
                     }
-                  },
-                  "decimals": 2,
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
-                  },
-                  "unit": "Bps"
+                  }
                 },
                 "overrides": [
                   {
@@ -1165,29 +1194,18 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "legend": {
-                  "calcs": [],
-                  "displayMode": "list",
-                  "enableFacetedFilter": false,
-                  "placement": "bottom",
-                  "showLegend": false
-                },
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
-                }
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-2": {
         "kind": "Panel",
         "spec": {
+          "id": 2,
+          "title": "CPU",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -1195,67 +1213,34 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\",instance=\"10.0.40.10:9100\"}[5m])) * 100)",
+                        "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\",instance=\"pve01\"}[5m])) * 100)",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 2,
-          "links": [],
-          "title": "CPU",
           "vizConfig": {
-            "group": "gauge",
             "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "fixedColor": "red",
-                    "mode": "thresholds"
-                  },
-                  "decimals": 2,
-                  "max": 100,
-                  "min": 0,
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "#EAB839",
-                        "value": 60
-                      },
-                      {
-                        "color": "red",
-                        "value": 85
-                      }
-                    ]
-                  },
-                  "unit": "percent"
-                },
-                "overrides": []
-              },
               "options": {
                 "barShape": "rounded",
                 "barWidthFactor": 0.25,
@@ -1283,15 +1268,48 @@
                 "sizing": "auto",
                 "sparkline": true,
                 "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 2,
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "#EAB839"
+                      },
+                      {
+                        "value": 85,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds",
+                    "fixedColor": "red"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-20": {
         "kind": "Panel",
         "spec": {
+          "id": 20,
+          "title": "STORAGE-POOLS",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -1299,13 +1317,13 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1313,22 +1331,22 @@
                         "instant": true,
                         "legendFormat": "Local",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1336,22 +1354,22 @@
                         "instant": true,
                         "legendFormat": "Local-LVM",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "B"
+                    "refId": "B",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1359,22 +1377,22 @@
                         "instant": true,
                         "legendFormat": "VM-Storage",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "C"
+                    "refId": "C",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1382,54 +1400,22 @@
                         "instant": true,
                         "legendFormat": "HDD-Backup",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "D"
+                    "refId": "D",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 20,
-          "links": [],
-          "title": "STORAGE-POOLS",
           "vizConfig": {
-            "group": "bargauge",
             "kind": "VizConfig",
+            "group": "bargauge",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "decimals": 2,
-                  "max": 100,
-                  "min": 0,
-                  "thresholds": {
-                    "mode": "percentage",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "orange",
-                        "value": 70
-                      },
-                      {
-                        "color": "red",
-                        "value": 85
-                      }
-                    ]
-                  },
-                  "unit": "percent"
-                },
-                "overrides": []
-              },
               "options": {
                 "displayMode": "gradient",
                 "legend": {
@@ -1456,36 +1442,60 @@
                   "valueSize": 25
                 },
                 "valueMode": "color"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 2,
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 70,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 85,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-21": {
         "kind": "Panel",
         "spec": {
+          "id": 21,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 21,
-          "links": [],
-          "title": "",
-          "transparent": true,
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -1494,36 +1504,36 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; height: 50px; font-size: 24px;\">\r\nVirtual Machines\r\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
-          }
+            }
+          },
+          "transparent": true
         }
       },
       "panel-22": {
         "kind": "Panel",
         "spec": {
+          "id": 22,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 22,
-          "links": [],
-          "title": "",
-          "transparent": true,
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -1532,15 +1542,23 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; height: 50px; font-size: 24px;\">\r\nLXC Containers\r\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
-          }
+            }
+          },
+          "transparent": true
         }
       },
       "panel-23": {
         "kind": "Panel",
         "spec": {
+          "id": 23,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -1548,13 +1566,13 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1563,22 +1581,22 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "Status"
+                    "refId": "Status",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1587,22 +1605,22 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "CPU %"
+                    "refId": "CPU %",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1611,22 +1629,22 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "RAM %"
+                    "refId": "RAM %",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1635,22 +1653,22 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "Uptime"
+                    "refId": "Uptime",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -1659,18 +1677,17 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "Disk %"
+                    "refId": "Disk %",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
               "transformations": [
                 {
-                  "group": "joinByField",
                   "kind": "Transformation",
+                  "group": "joinByField",
                   "spec": {
                     "options": {
                       "byField": "id",
@@ -1679,8 +1696,8 @@
                   }
                 },
                 {
-                  "group": "organize",
                   "kind": "Transformation",
+                  "group": "organize",
                   "spec": {
                     "options": {
                       "excludeByName": {
@@ -1752,19 +1769,30 @@
                     }
                   }
                 }
-              ]
+              ],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 23,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "table",
             "kind": "VizConfig",
+            "group": "table",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+              },
               "fieldConfig": {
                 "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
                     "mode": "thresholds"
                   },
@@ -1777,23 +1805,14 @@
                       "reducers": []
                     },
                     "inspect": false
-                  },
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
                   }
                 },
                 "overrides": [
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "Status",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "Status"
                     },
                     "properties": [
                       {
@@ -1845,8 +1864,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "CPU %",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "CPU %"
                     },
                     "properties": [
                       {
@@ -1905,8 +1924,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "RAM %",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "RAM %"
                     },
                     "properties": [
                       {
@@ -1965,8 +1984,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "Uptime",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "Uptime"
                     },
                     "properties": [
                       {
@@ -1978,8 +1997,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "Disk %",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "Disk %"
                     },
                     "properties": [
                       {
@@ -2037,19 +2056,18 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "cellHeight": "sm",
-                "showHeader": true
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-24": {
         "kind": "Panel",
         "spec": {
+          "id": 24,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -2057,13 +2075,13 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -2072,22 +2090,22 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "Status"
+                    "refId": "Status",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -2096,46 +2114,46 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "CPU %"
+                    "refId": "CPU %",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "(pve_memory_usage_bytes{id=~\"qemu/.*\"} / pve_memory_size_bytes{id=~\"lxc/.*\"} * 100) * on(id) group_left(name) pve_guest_info",
+                        "expr": "(pve_memory_usage_bytes{id=~\"qemu/.*\"} / pve_memory_size_bytes{id=~\"qemu/.*\"} * 100) * on(id) group_left(name) pve_guest_info",
                         "format": "table",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "RAM %"
+                    "refId": "RAM %",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
@@ -2144,42 +2162,41 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "Uptime"
+                    "refId": "Uptime",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "(pve_disk_usage_bytes{id=~\"qemu/.*\"} / pve_disk_size_bytes{id=~\"lxc/.*\"} * 100) * on(id) group_left(name) pve_guest_info",
+                        "expr": "(pve_disk_usage_bytes{id=~\"qemu/.*\"} / pve_disk_size_bytes{id=~\"qemu/.*\"} * 100) * on(id) group_left(name) pve_guest_info",
                         "format": "table",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "Disk %"
+                    "refId": "Disk %",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
               "transformations": [
                 {
-                  "group": "joinByField",
                   "kind": "Transformation",
+                  "group": "joinByField",
                   "spec": {
                     "options": {
                       "byField": "id",
@@ -2188,8 +2205,8 @@
                   }
                 },
                 {
-                  "group": "organize",
                   "kind": "Transformation",
+                  "group": "organize",
                   "spec": {
                     "options": {
                       "excludeByName": {
@@ -2261,19 +2278,30 @@
                     }
                   }
                 }
-              ]
+              ],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 24,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "table",
             "kind": "VizConfig",
+            "group": "table",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+              },
               "fieldConfig": {
                 "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
                     "mode": "thresholds"
                   },
@@ -2286,23 +2314,14 @@
                       "reducers": []
                     },
                     "inspect": false
-                  },
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
                   }
                 },
                 "overrides": [
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "Status",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "Status"
                     },
                     "properties": [
                       {
@@ -2354,8 +2373,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "CPU %",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "CPU %"
                     },
                     "properties": [
                       {
@@ -2414,8 +2433,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "RAM %",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "RAM %"
                     },
                     "properties": [
                       {
@@ -2474,8 +2493,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "Uptime",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "Uptime"
                     },
                     "properties": [
                       {
@@ -2487,8 +2506,8 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "Disk %",
-                      "scope": "series"
+                      "scope": "series",
+                      "options": "Disk %"
                     },
                     "properties": [
                       {
@@ -2546,40 +2565,31 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "cellHeight": "sm",
-                "showHeader": true
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-25": {
         "kind": "Panel",
         "spec": {
+          "id": 25,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 25,
-          "links": [],
-          "title": "",
-          "transparent": true,
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -2588,15 +2598,23 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; height: 50px; font-size: 24px;\">\r\nSystem Health\r\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
-          }
+            }
+          },
+          "transparent": true
         }
       },
       "panel-26": {
         "kind": "Panel",
         "spec": {
+          "id": 26,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -2604,58 +2622,36 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "node_time_seconds{instance=\"10.0.40.10:9100\"} - node_boot_time_seconds{instance=\"10.0.40.10:9100\"}",
+                        "expr": "node_time_seconds{instance=\"pve01\"} - node_boot_time_seconds{instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 26,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "fixed"
-                  },
-                  "displayName": "Uptime",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
-                  },
-                  "unit": "dthms"
-                },
-                "overrides": []
-              },
               "options": {
                 "colorMode": "none",
                 "graphMode": "none",
@@ -2675,15 +2671,37 @@
                 },
                 "textMode": "value_and_name",
                 "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "displayName": "Uptime",
+                  "unit": "dthms",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "fixed"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-27": {
         "kind": "Panel",
         "spec": {
+          "id": 27,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -2691,66 +2709,36 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "node_hwmon_temp_celsius{chip=\"platform_coretemp_0\",sensor=\"temp1\",instance=\"10.0.40.10:9100\"}",
+                        "expr": "node_hwmon_temp_celsius{chip=\"platform_coretemp_0\",sensor=\"temp1\",instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 27,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "displayName": "CPU Temperature",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 60
-                      },
-                      {
-                        "color": "red",
-                        "value": 80
-                      }
-                    ]
-                  },
-                  "unit": "celsius"
-                },
-                "overrides": []
-              },
               "options": {
                 "colorMode": "value",
                 "graphMode": "none",
@@ -2770,15 +2758,45 @@
                 },
                 "textMode": "value_and_name",
                 "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "displayName": "CPU Temperature",
+                  "unit": "celsius",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-28": {
         "kind": "Panel",
         "spec": {
+          "id": 28,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -2786,66 +2804,36 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "nvidia_smi_temperature_gpu{instance=\"10.0.40.10:9835\"}",
+                        "expr": "nvidia_smi_temperature_gpu{instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 28,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "displayName": "GPU Temperature",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 70
-                      },
-                      {
-                        "color": "red",
-                        "value": 85
-                      }
-                    ]
-                  },
-                  "unit": "celsius"
-                },
-                "overrides": []
-              },
               "options": {
                 "colorMode": "value",
                 "graphMode": "none",
@@ -2865,15 +2853,45 @@
                 },
                 "textMode": "value_and_name",
                 "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "displayName": "GPU Temperature",
+                  "unit": "celsius",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 70,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 85,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-3": {
         "kind": "Panel",
         "spec": {
+          "id": 3,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -2881,42 +2899,61 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\",instance=\"10.0.40.10:9100\"}[5m])) * 100)",
+                        "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\",instance=\"pve01\"}[5m])) * 100)",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 3,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "timeseries",
             "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
               "fieldConfig": {
                 "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
-                    "fixedColor": "#5794f2",
-                    "mode": "fixed"
+                    "mode": "fixed",
+                    "fixedColor": "#5794f2"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -2954,60 +2991,34 @@
                     "thresholdsStyle": {
                       "mode": "off"
                     }
-                  },
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
                   }
                 },
                 "overrides": []
-              },
-              "options": {
-                "legend": {
-                  "calcs": [],
-                  "displayMode": "list",
-                  "placement": "bottom",
-                  "showLegend": false
-                },
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
-                }
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-4": {
         "kind": "Panel",
         "spec": {
+          "id": 4,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 4,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -3016,15 +3027,22 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; justify-content: center; height: 50px; font-size: 20px;\">\nIntel Core i7-9700K\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-5": {
         "kind": "Panel",
         "spec": {
+          "id": 5,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -3032,62 +3050,34 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "node_procs_running{instance=\"10.0.40.10:9100\"}",
+                        "expr": "node_procs_running{instance=\"pve01\"}",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 5,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "fixedColor": "#808080",
-                    "mode": "fixed"
-                  },
-                  "decimals": 0,
-                  "displayName": "Processes",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "red",
-                        "value": 80
-                      }
-                    ]
-                  },
-                  "unit": "short"
-                },
-                "overrides": []
-              },
               "options": {
                 "colorMode": "none",
                 "graphMode": "none",
@@ -3107,15 +3097,43 @@
                 },
                 "textMode": "value_and_name",
                 "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "displayName": "Processes",
+                  "unit": "short",
+                  "decimals": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "#808080"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-6": {
         "kind": "Panel",
         "spec": {
+          "id": 6,
+          "title": "GPU",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -3123,67 +3141,34 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "nvidia_smi_utilization_gpu_ratio{instance=\"10.0.40.10:9835\"} * 100",
+                        "expr": "nvidia_smi_utilization_gpu_ratio{instance=\"pve01\"} * 100",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 6,
-          "links": [],
-          "title": "GPU",
           "vizConfig": {
-            "group": "gauge",
             "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "fixedColor": "red",
-                    "mode": "thresholds"
-                  },
-                  "decimals": 2,
-                  "max": 100,
-                  "min": 0,
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "#EAB839",
-                        "value": 60
-                      },
-                      {
-                        "color": "red",
-                        "value": 85
-                      }
-                    ]
-                  },
-                  "unit": "percent"
-                },
-                "overrides": []
-              },
               "options": {
                 "barShape": "rounded",
                 "barWidthFactor": 0.25,
@@ -3211,15 +3196,48 @@
                 "sizing": "auto",
                 "sparkline": true,
                 "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 2,
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "#EAB839"
+                      },
+                      {
+                        "value": 85,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds",
+                    "fixedColor": "red"
+                  }
+                },
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-7": {
         "kind": "Panel",
         "spec": {
+          "id": 7,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -3227,42 +3245,61 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "nvidia_smi_utilization_gpu_ratio{instance=\"10.0.40.10:9835\"} * 100",
+                        "expr": "nvidia_smi_utilization_gpu_ratio{instance=\"pve01\"} * 100",
                         "legendFormat": "__auto",
                         "range": true
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 7,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "timeseries",
             "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
               "fieldConfig": {
                 "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
                   "color": {
-                    "fixedColor": "#5794f2",
-                    "mode": "fixed"
+                    "mode": "fixed",
+                    "fixedColor": "#5794f2"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -3300,60 +3337,34 @@
                     "thresholdsStyle": {
                       "mode": "off"
                     }
-                  },
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      }
-                    ]
                   }
                 },
                 "overrides": []
-              },
-              "options": {
-                "legend": {
-                  "calcs": [],
-                  "displayMode": "list",
-                  "placement": "bottom",
-                  "showLegend": false
-                },
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
-                }
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-8": {
         "kind": "Panel",
         "spec": {
+          "id": 8,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
               "queries": [],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 8,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "text",
             "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.1",
             "spec": {
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
               "options": {
                 "code": {
                   "language": "plaintext",
@@ -3362,15 +3373,22 @@
                 },
                 "content": "<div style=\"display: flex; align-items: center; justify-content: center; height: 50px; font-size: 20px;\">\nNVIDIA GeForce RTX 3070 Ti\n</div>",
                 "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       },
       "panel-9": {
         "kind": "Panel",
         "spec": {
+          "id": 9,
+          "title": "",
+          "description": "",
+          "links": [],
           "data": {
             "kind": "QueryGroup",
             "spec": {
@@ -3378,84 +3396,101 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "nvidia_smi_memory_used_bytes{instance=\"10.0.40.10:9835\"}",
+                        "expr": "nvidia_smi_memory_used_bytes{instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "A"
+                    "refId": "A",
+                    "hidden": false
                   }
                 },
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
                     "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
                       },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "nvidia_smi_memory_total_bytes{instance=\"10.0.40.10:9835\"}",
+                        "expr": "nvidia_smi_memory_total_bytes{instance=\"pve01\"}",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
-                      },
-                      "version": "v0"
+                      }
                     },
-                    "refId": "B"
+                    "refId": "B",
+                    "hidden": false
                   }
                 }
               ],
-              "queryOptions": {},
-              "transformations": []
+              "transformations": [],
+              "queryOptions": {}
             }
           },
-          "description": "",
-          "id": 9,
-          "links": [],
-          "title": "",
           "vizConfig": {
-            "group": "stat",
             "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.1",
             "spec": {
+              "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "vertical",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": true
+                },
+                "showPercentChange": false,
+                "text": {
+                  "valueSize": 25
+                },
+                "textMode": "value_and_name",
+                "wideLayout": true
+              },
               "fieldConfig": {
                 "defaults": {
-                  "color": {
-                    "fixedColor": "#808080",
-                    "mode": "fixed"
-                  },
+                  "unit": "decbytes",
                   "decimals": 2,
-                  "fieldMinMax": false,
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
                       {
-                        "color": "green",
-                        "value": 0
+                        "value": 0,
+                        "color": "green"
                       },
                       {
-                        "color": "red",
-                        "value": 80
+                        "value": 80,
+                        "color": "red"
                       }
                     ]
                   },
-                  "unit": "decbytes"
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "#808080"
+                  },
+                  "fieldMinMax": false
                 },
                 "overrides": [
                   {
@@ -3483,29 +3518,8 @@
                     ]
                   }
                 ]
-              },
-              "options": {
-                "colorMode": "none",
-                "graphMode": "none",
-                "justifyMode": "auto",
-                "orientation": "vertical",
-                "percentChangeColorMode": "standard",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": true
-                },
-                "showPercentChange": false,
-                "text": {
-                  "valueSize": 25
-                },
-                "textMode": "value_and_name",
-                "wideLayout": true
               }
-            },
-            "version": "13.2.0"
+            }
           }
         }
       }
@@ -3517,365 +3531,365 @@
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-1"
-              },
-              "height": 2,
-              "width": 24,
-              "x": 0,
-              "y": 0
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 2,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-2"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 0,
-              "y": 2
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 3,
+              "y": 2,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-3"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 3,
-              "y": 2
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 6,
+              "y": 2,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-6"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 6,
-              "y": 2
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 9,
+              "y": 2,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-7"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 9,
-              "y": 2
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 12,
+              "y": 2,
+              "width": 6,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-18"
-              },
-              "height": 8,
-              "width": 6,
-              "x": 12,
-              "y": 2
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 18,
+              "y": 2,
+              "width": 6,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-19"
-              },
-              "height": 8,
-              "width": 6,
-              "x": 18,
-              "y": 2
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 8,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-4"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 0,
-              "y": 8
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 3,
+              "y": 8,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-5"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 3,
-              "y": 8
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 6,
+              "y": 8,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-8"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 6,
-              "y": 8
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 9,
+              "y": 8,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-9"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 9,
-              "y": 8
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 10,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-10"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 0,
-              "y": 10
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 3,
+              "y": 10,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-11"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 3,
-              "y": 10
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 6,
+              "y": 10,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-14"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 6,
-              "y": 10
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 9,
+              "y": 10,
+              "width": 3,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-15"
-              },
-              "height": 6,
-              "width": 3,
-              "x": 9,
-              "y": 10
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 12,
+              "y": 10,
+              "width": 12,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-20"
-              },
-              "height": 8,
-              "width": 12,
-              "x": 12,
-              "y": 10
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 16,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-12"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 0,
-              "y": 16
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 3,
+              "y": 16,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-13"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 3,
-              "y": 16
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 6,
+              "y": 16,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-16"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 6,
-              "y": 16
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 9,
+              "y": 16,
+              "width": 3,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-17"
-              },
-              "height": 2,
-              "width": 3,
-              "x": 9,
-              "y": 16
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 18,
+              "width": 12,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-21"
-              },
-              "height": 2,
-              "width": 12,
-              "x": 0,
-              "y": 18
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 12,
+              "y": 18,
+              "width": 12,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-22"
-              },
-              "height": 2,
-              "width": 12,
-              "x": 12,
-              "y": 18
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 20,
+              "width": 12,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-24"
-              },
-              "height": 8,
-              "width": 12,
-              "x": 0,
-              "y": 20
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 12,
+              "y": 20,
+              "width": 12,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-23"
-              },
-              "height": 8,
-              "width": 12,
-              "x": 12,
-              "y": 20
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 28,
+              "width": 24,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-25"
-              },
-              "height": 2,
-              "width": 24,
-              "x": 0,
-              "y": 28
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 0,
+              "y": 30,
+              "width": 8,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-26"
-              },
-              "height": 2,
-              "width": 8,
-              "x": 0,
-              "y": 30
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 8,
+              "y": 30,
+              "width": 8,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-27"
-              },
-              "height": 2,
-              "width": 8,
-              "x": 8,
-              "y": 30
+              }
             }
           },
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 16,
+              "y": 30,
+              "width": 8,
+              "height": 2,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-28"
-              },
-              "height": 2,
-              "width": 8,
-              "x": 16,
-              "y": 30
+              }
             }
           }
         ]
@@ -3883,17 +3897,12 @@
     },
     "links": [],
     "liveNow": false,
-    "preferences": {
-      "layout": {
-        "kind": "GridLayout",
-        "spec": {
-          "items": []
-        }
-      }
-    },
     "preload": false,
     "tags": [],
     "timeSettings": {
+      "timezone": "browser",
+      "from": "now-6h",
+      "to": "now",
       "autoRefresh": "",
       "autoRefreshIntervals": [
         "5s",
@@ -3907,13 +3916,18 @@
         "2h",
         "1d"
       ],
-      "fiscalYearStartMonth": 0,
-      "from": "now-1h",
       "hideTimepicker": false,
-      "timezone": "browser",
-      "to": "now"
+      "fiscalYearStartMonth": 0
     },
     "title": "Homelab Overview",
-    "variables": []
+    "variables": [],
+    "preferences": {
+      "layout": {
+        "kind": "GridLayout",
+        "spec": {
+          "items": []
+        }
+      }
+    }
   }
 }
