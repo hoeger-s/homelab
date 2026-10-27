@@ -1,1 +1,7 @@
 manuals/
+
+# Zugangsdaten nie einchecken
+.env
+*.env
+!*.env.example
+pve.yml
