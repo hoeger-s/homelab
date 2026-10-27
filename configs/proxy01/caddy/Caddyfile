@@ -1,5 +1,5 @@
 # /etc/caddy/Caddyfile auf proxy01
-# Der deSEC-Token kommt aus /etc/caddy/desec.env (nicht im Repo)
+# Der deSEC-Token kommt aus /etc/caddy/desec.env
 
 *.home.<domain> {
 	tls {
@@ -11,11 +11,13 @@
 		propagation_timeout -1
 	}
 
-	# Muster für einen angebundenen Dienst:
-	# @dienst host dienst.home.<domain>
-	# handle @dienst {
-	# 	reverse_proxy <ip>:<port>
-	# }
+	# Kalender, Aufgaben und Kontakte (Radicale auf cal01)
+	@cal host cal.home.<domain>
+	handle @cal {
+		reverse_proxy 10.0.40.30:5232
+	}
+
+	# Die Weiterleitung zum KI-Assistenten (ki01) ist ein eigenes Projekt und nicht Teil dieses Repos
 
 	# Unbekannte Namen sofort abweisen
 	handle {
