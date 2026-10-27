@@ -1,0 +1,19 @@
+[OPTIONS]
+
+enable: 1
+policy_in: DROP
+policy_out: DROP
+
+[RULES]
+
+IN ACCEPT -source dc/admin -p tcp -dport 22 -log nolog # SSH von admin (Workstation)
+IN ACCEPT -source dc/trusted -p tcp -dport 80 -log nolog # HTTP aus Trusted (Umleitung auf HTTPS)
+IN ACCEPT -source dc/trusted -p tcp -dport 443 -log nolog # HTTPS aus Trusted
+IN ACCEPT -source dc/vpn -p tcp -dport 443 -log nolog # HTTPS aus dem VPN (WireGuard)
+IN ACCEPT -source dc/ki01 -p tcp -dport 443 -log nolog # HTTPS von ki01 (KI-Assistent, Kalender)
+OUT ACCEPT -p udp -dport 53 -log nolog # DNS
+OUT ACCEPT -p tcp -dport 53 -log nolog # DNS
+OUT ACCEPT -p udp -dport 123 -log nolog # Zeit (NTP)
+OUT ACCEPT -p tcp -dport 80 -log nolog # HTTP (Updates)
+OUT ACCEPT -p tcp -dport 443 -log nolog # HTTPS (Updates, Zertifikate, Weiterleitung an ki01)
+OUT ACCEPT -dest dc/cal01 -p tcp -dport 5232 -log nolog # Radicale auf cal01 (Weiterleitung)

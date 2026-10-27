@@ -1,0 +1,9 @@
+[Unit]
+Description=Host-Konfiguration pve01 sichern und Aufbewahrung host-backups (7/4/3)
+RequiresMountsFor=/mnt/hdd-storage
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pve01-host-backup.sh
+Nice=10
+IOSchedulingClass=idle

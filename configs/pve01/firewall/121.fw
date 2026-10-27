@@ -1,0 +1,16 @@
+[OPTIONS]
+
+enable: 1
+policy_in: DROP
+policy_out: DROP
+
+[RULES]
+
+IN ACCEPT -source dc/admin -p tcp -dport 22 -log nolog # SSH von admin (Workstation)
+IN ACCEPT -source dc/proxy01 -p tcp -dport 5232 -log nolog # Radicale von proxy01 (Reverse Proxy)
+IN ACCEPT -source dc/trusted -p tcp -dport 5232 -log nolog # Radicale aus Trusted (Rückfallweg)
+OUT ACCEPT -p udp -dport 53 -log nolog # DNS
+OUT ACCEPT -p tcp -dport 53 -log nolog # DNS
+OUT ACCEPT -p udp -dport 123 -log nolog # Zeit (NTP)
+OUT ACCEPT -p tcp -dport 80 -log nolog # HTTP (Updates)
+OUT ACCEPT -p tcp -dport 443 -log nolog # HTTPS (Updates)
