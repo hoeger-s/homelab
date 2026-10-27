@@ -22,7 +22,7 @@ groups:
           description: "up{job=\"node_exporter_pve01\"} ist seit mindestens 2 Minuten 0."
 
       - alert: Pve01CpuHigh
-        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{instance="10.0.40.10:9100", mode="idle"}[5m])) * 100) > 85
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{instance="pve01", mode="idle"}[5m])) * 100) > 85
         for: 5m
         labels:
           severity: warning
@@ -31,7 +31,7 @@ groups:
           description: "CPU-Auslastung über 85% seit mindestens 5 Minuten."
 
       - alert: Pve01RamHigh
-        expr: 100 - ((node_memory_MemAvailable_bytes{instance="10.0.40.10:9100"} / node_memory_MemTotal_bytes{instance="10.0.40.10:9100"}) * 100) > 85
+        expr: 100 - ((node_memory_MemAvailable_bytes{instance="pve01"} / node_memory_MemTotal_bytes{instance="pve01"}) * 100) > 85
         for: 5m
         labels:
           severity: warning
@@ -49,7 +49,7 @@ groups:
           description: "Über 85% belegt seit mindestens 10 Minuten."
 
       - alert: Pve01GpuHigh
-        expr: nvidia_smi_utilization_gpu_ratio{instance="10.0.40.10:9835"} * 100 > 85
+        expr: nvidia_smi_utilization_gpu_ratio{instance="pve01"} * 100 > 85
         for: 5m
         labels:
           severity: warning

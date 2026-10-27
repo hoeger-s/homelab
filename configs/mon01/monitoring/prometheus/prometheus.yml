@@ -2,36 +2,46 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+# instance = fester Name des Rechners statt Adresse:Port.
+# Ein Adresswechsel ändert nur noch die Zeile „targets“ des jeweiligen Ziels.
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+        labels:
+          instance: 'mon01'
 
   - job_name: 'node_exporter_mon01'
     static_configs:
       - targets: ['node-exporter:9100']
+        labels:
+          instance: 'mon01'
 
   - job_name: 'node_exporter_pve01'
     static_configs:
-      - targets: ['10.0.40.10:9100']
+      - targets: ['10.0.99.10:9100']
+        labels:
+          instance: 'pve01'
 
   - job_name: 'pve_exporter'
     static_configs:
-      - targets: ['10.0.40.10']
+      - targets: ['10.0.99.10']
+        labels:
+          instance: 'pve01'
     metrics_path: /pve
     params:
       module: [default]
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
       - target_label: __address__
         replacement: pve-exporter:9221
 
   - job_name: 'nvidia_gpu_pve01'
     static_configs:
-      - targets: ['10.0.40.10:9835']
+      - targets: ['10.0.99.10:9835']
+        labels:
+          instance: 'pve01'
 
 alerting:
   alertmanagers:

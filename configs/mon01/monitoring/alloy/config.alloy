@@ -1,0 +1,33 @@
+loki.relabel "journal_mon01" {
+  forward_to = []
+
+  rule {
+    target_label = "job"
+    replacement  = "systemd-journal"
+  }
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+}
+
+loki.source.journal "mon01" {
+  max_age       = "12h"
+  labels        = {
+    host = "mon01",
+  }
+  relabel_rules = loki.relabel.journal_mon01.rules
+  forward_to    = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

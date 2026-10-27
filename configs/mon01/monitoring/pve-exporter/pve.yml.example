@@ -1,0 +1,7 @@
+# Vorlage für /opt/monitoring/pve-exporter/pve.yml auf mon01
+# Benutzer mit Rolle PVEAuditor, nur lesend. verify_ssl: false, weil pve01 ein selbst signiertes Zertifikat hat.
+default:
+  user: pve-exporter@pve
+  token_name: <token-name>
+  token_value: <token>
+  verify_ssl: false
