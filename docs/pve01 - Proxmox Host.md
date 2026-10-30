@@ -159,7 +159,7 @@ Konfiguration: [`configs/pve01/alloy/config.alloy`](../configs/pve01/alloy/confi
 
   Dateien: [`configs/pve01/host-backup/`](../configs/pve01/host-backup/)
 
-- **Sicherung von `mon01`:** `mon01` schickt seine eigene Host-Sicherung jede Nacht per `scp` über das Netzwerk an `pve01` und legt sie dort auf der Backup-Platte ab. Dafür ist SSH von `mon01` in der Firewall eigens freigegeben (Port 22, siehe Regeln oben). Der SSH-Schlüssel von `mon01` darf dort nur Dateien ablegen, nichts löschen. So kann ein übernommenes `mon01` keine Sicherungen vernichten. Alte Archive von `mon01` räumt deshalb das Skript von `pve01` mit auf, mit derselben Aufbewahrung.
+- **Sicherung von `mon01`:** `mon01` legt seine Host-Sicherung jede Nacht per `scp` auf der Backup-Platte von `pve01` ab. Dafür ist SSH von `mon01` in der Firewall freigegeben (Port 22, siehe Regeln oben). Alte Archive von `mon01` räumt das Skript von `pve01` mit auf.
 
 Alles Weitere, auch zur Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederherstellung.md)
 
