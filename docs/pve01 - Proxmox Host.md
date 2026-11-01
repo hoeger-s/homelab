@@ -37,7 +37,7 @@ Basis-Hypervisor des Homelabs. Trägt aktuell alle Container und künftig auch d
 | Switchport | Port 2, Profil pve01-Trunk (nativ Management, getaggt Homelab) |
 | Weboberfläche | `https://10.0.99.10:8006` bzw. `https://pve01.internal:8006` |
 
-Der Host selbst sitzt im Management-VLAN, die Container im Homelab-VLAN. Möglich macht das eine VLAN-fähige Bridge. Der Port zum Gateway ist ein Trunk und jeder Container bekommt in seiner Netzwerkkonfiguration `tag=40`. Die Bridge reicht die Pakete nur durch. Aus dem Homelab ist der Host damit nicht ansprechbar, da er dort keine eigene Adresse hat. Wer aus dem Homelab zum Host will, muss über das Gateway und dort ist per Firewall nur freigegeben, was `mon01` für Monitoring und Sicherung braucht.
+Der Host selbst sitzt im Management-VLAN, die Container im Homelab-VLAN. Möglich macht das eine VLAN-fähige Bridge. Der Port zum UniFi-Gateway ist ein Trunk und jeder Container bekommt in seiner Netzwerkkonfiguration `tag=40`. Die Bridge reicht die Pakete nur durch. Aus dem Homelab ist der Host damit nicht ansprechbar, da er dort keine eigene Adresse hat. Wer aus dem Homelab zum Host will, muss über das Gateway und dort ist per Firewall nur freigegeben, was `mon01` für Monitoring und Sicherung braucht.
 
 > Diese Trennung gilt nur auf Netzwerkebene. Container teilen sich den Kernel des Betriebssystems mit dem Host. Über eine Sicherheitslücke im Kernel könnte man also aus einem Container auf den Host ausbrechen, ganz ohne Umweg übers Netz. Meine Container laufen deshalb zusätzlich unprivilegiert. Wer im Container `root` ist, hat auf dem Host keinerlei Rechte und kommt an viele Funktionen des Kernels gar nicht erst heran. Einen solchen Ausbruch verhindert das aber nicht sicher. Deutlich stärker getrennt sind VMs, da sie einen eigenen Kernel mitbringen.
 
@@ -118,7 +118,8 @@ Quellen sind Aliase, die Adressen stehen nur einmal im Block `[ALIASES]` derselb
 
 Regeldateien: [`configs/pve01/firewall/`](../configs/pve01/firewall/)
 
-> Die Firewall-Dateien liegen auf dem Host unter `/etc/pve/firewall/`, nicht in den Containern. Container-Snapshots und Container-Backups enthalten sie also nicht. Gesichert werden sie mit der Host-Sicherung von `pve01`.
+> Die Firewall-Dateien liegen auf dem Host unter `/etc/pve/firewall/`, nicht in den Containern. Die Regeln eines Containers nimmt seine Sicherung mit, ein Snapshot nicht. `cluster.fw` mit den Aliasen und den Regeln für den Host kommt nur mit der Host-Sicherung von `pve01`.
+
 
 
 ## 📊 Monitoring
@@ -167,6 +168,6 @@ Alles Weitere, auch zur Wiederherstellung: [Backup & Wiederherstellung](Backup%2
 ## 📝 Offene Punkte
 
 - Kopie der Backups außer Haus
-- `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA gibt
+- `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA (Certificate Authority) gibt
 - Zertifikat der Weboberfläche ist selbst signiert, wird mit der internen CA ersetzt
 - Ausstehende Updates einspielen
