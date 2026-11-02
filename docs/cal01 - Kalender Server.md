@@ -1,8 +1,8 @@
 # cal01 - Kalender Server
 
-Stand: 29.09.2026
+Stand: 26.10.2026
 
-Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV).
+Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV). iOS-Geräte und Thunderbird greifen über den Reverse Proxy darauf zu.
 
 
 ## 🖥️ Container
@@ -16,39 +16,55 @@ Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV).
 | vCPU | 1 |
 | RAM / Swap | 512 MB / 256 MB |
 | Disk | 8 GB (`vm-storage`) |
-| Autostart | ja (`onboot`, `order=1,up=15`) |
+| Autostart | ja (`onboot`, `order=2`) |
+
+> `cal01` startet als zweiter Container direkt nach `proxy01` und noch vor dem KI-Assistenten, der auf Kalender und Aufgaben zugreift.
 
 
 ## 🌐 Netzwerk
 
 | Option | Value |
 |---|---|
-| Interface | eth0 (`vmbr0`) |
+| Interface | `eth0` -> Bridge `vmbr0`, `tag=40` |
 | Hostname | cal01 |
-| FQDN | cal01.stefan.lab |
-| IP CIDR | 10.0.40.14/24 |
+| FQDN | cal01.internal |
+| IP CIDR | 10.0.40.30/24 |
 | Gateway | 10.0.40.1 |
-| DNS | 10.0.40.1 |
-| VLAN | Homelab-VLAN (10.0.40.0/24) |
+| DNS | 10.0.40.1, Suchdomäne `internal` |
+| VLAN | Homelab (VLAN 40) |
+
+Die IP-Adresse ist in der Container-Konfiguration auf `pve01` fest eingetragen und wird nicht per DHCP vom UniFi-Gateway vergeben. Unter `cal01.internal` ist der Container per DNS-Eintrag im Gateway erreichbar. `.30` ist die erste Adresse im Block Anwendungen.
+
+DNS-Server und Suchdomäne stehen ebenfalls fest in der Container-Konfiguration. Ohne eigene Angabe übernimmt Proxmox beim Anlegen die Werte des Hosts und der Container würde das Gateway im Management-VLAN fragen.
 
 
 ## 🔐 Hardening
 
-- Separaten Admin-User mit `sudo`-Rechten und SSH-Key-Auth angelegt
-- Root-SSH-Login und Passwort-Auth deaktiviert (Drop-in unter `/etc/ssh/sshd_config.d/`)
-- Proxmox-Gast-Firewall statt `ufw`, Default-Policy `DROP` in beide Richtungen
+- Separater Admin-User mit `sudo` und SSH-Key
+- Root- und Passwort-Login per SSH deaktiviert
+- Proxmox-Firewall statt `ufw`, Default-Policy `DROP` in beide Richtungen
 - Radicale läuft als eigener System-User `radicale`, nicht als root
+
+Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht oder verlässt. Wer im Container `root` ist, kann die Regeln deshalb weder sehen noch lockern. Mit `ufw` lägen sie im Container selbst. Auch ausgehend ist nur erlaubt, was der Container für Updates braucht: DNS, Zeit und Web. Radicale selbst baut keine Verbindungen nach außen auf. Ein übernommener Kalender-Server kann sich so kaum weiter im Homelab ausbreiten.
+
+**Regeln (`121.fw`):**
 
 | Direction | Action | Protocol | Port | Source / Dest | Zweck |
 |---|---|---|---|---|---|
-| in | ACCEPT | tcp | 22 | 10.0.10.0/24 | SSH nur aus Trusted-VLAN |
-| in | ACCEPT | tcp | 5232 | 10.0.40.13 | Zugriff über `proxy01` (Caddy) |
-| in | ACCEPT | tcp | 5232 | 10.0.10.0/24 | Direktzugriff aus Trusted-VLAN (Fallback) |
+| in | ACCEPT | tcp | 22 | `admin` | SSH nur von der Workstation |
+| in | ACCEPT | tcp | 5232 | `proxy01` | Zugriff über den Reverse Proxy |
+| in | ACCEPT | tcp | 5232 | `trusted` | Rückfallweg direkt aus Trusted |
 | out | ACCEPT | udp/tcp | 53 | any | DNS |
-| out | ACCEPT | udp | 123 | any | NTP |
-| out | ACCEPT | tcp | 80, 443 | any | Paketquellen |
+| out | ACCEPT | udp | 123 | any | Zeit (NTP) |
+| out | ACCEPT | tcp | 80, 443 | any | Updates |
 
-Regeldatei: [`configs/proxmox/121.fw`](../configs/proxmox/121.fw)
+Quellen sind Aliase aus `cluster.fw` (siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-in-proxmox)).
+
+Regeldatei: [`configs/pve01/firewall/121.fw`](../configs/pve01/firewall/121.fw)
+
+Im Gateway kommt dazu die Regel "Trusted zu cal01" (5232) für den Rückfallweg, siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-im-gateway-zonen). Der normale Weg geht über `proxy01`. Über den Rückfallweg am Proxy vorbei bleiben Kalender, Aufgaben und Kontakte aus dem Heimnetz auch bei einem Ausfall von `proxy01` erreichbar.
+
+> Die Regeln liegen auf `pve01` unter `/etc/pve/firewall/121.fw`.
 
 
 ## 📅 Radicale
@@ -58,35 +74,51 @@ Installiert aus den Debian-Paketquellen (`radicale` 3.5.3), dazu `python3-bcrypt
 | Option | Value |
 |---|---|
 | Adresse | `https://cal.home.<domain>` (über `proxy01`) |
-| Backend | `http://10.0.40.14:5232` |
-| Auth | `htpasswd`, bcrypt |
-| Rechte | `owner_only` (jeder User sieht nur seine eigenen Collections) |
+| Rückfallweg | `http://10.0.40.30:5232` (nur aus Trusted) |
+| Anmeldung | `htpasswd`, bcrypt |
+| Rechte | Regeldatei `/etc/radicale/rights`: jeder sieht seine eigenen Sammlungen, dazu gezielte Freigaben einzelner Kalender für weitere Benutzer |
+| Verlauf | jede Änderung als Git-Commit im Datenordner |
 | Storage | `/var/lib/radicale/collections` (Dateien, keine Datenbank) |
-| Clients | iOS Kalender/Erinnerungen/Kontakte, Thunderbird (CalDAV/CardDAV) |
+| Clients | iOS Kalender, Erinnerungen, Kontakte, Thunderbird |
 
 ```bash
 /etc/radicale/
 ├── config
 ├── config.orig                         # Debian-Original
-└── users                               # htpasswd, Rechte 640 root:radicale, nicht committen
+├── rights                              # Freigaben, nicht im Repo
+├── rights.orig                         # Debian-Original
+└── users                               # htpasswd, Rechte 640 root:radicale, nicht im Repo
 ```
 
-Konfiguration: [`configs/radicale/config`](../configs/radicale/config)
+Konfiguration: [`configs/cal01/radicale/config`](../configs/cal01/radicale/config)
 
-> iOS sendet über reines HTTP keine Zugangsdaten (Server-Log zeigt nur anonymous / 401). Deshalb läuft der Zugriff von Anfang an über `proxy01` mit HTTPS.
+**Freigaben:** Ein eigener Benutzer für den KI-Assistenten darf genau zwei Sammlungen lesen und schreiben (Aufgaben und einen Kalender), sonst nichts. Kontakte sind für ihn gesperrt. Die Regeldatei statt der eingebauten Einstellung `owner_only` braucht es, sobald ein zweiter Benutzer auf einzelne fremde Kalender zugreifen soll. So bekommt der KI-Assistent genau die zwei Sammlungen und nicht mehr.
+
+**Verlauf per Git:** Radicale führt nach jeder Änderung einen Befehl aus (`hook`). Hier ist das ein `git commit` im Datenordner, mit dem Benutzer in der Nachricht. Hat ein Client etwas kaputt synchronisiert, lässt sich der alte Stand einfach aus dem Verlauf zurückholen.
+
+> iOS sendet über reines HTTP keine Zugangsdaten, im Server-Log steht dann nur anonymous / 401. Deshalb läuft der Zugriff über `proxy01` mit HTTPS.
+
+
+## 📊 Monitoring
+
+`cal01` wird noch nicht überwacht. Geplant ist eine Dienst-Prüfung von `mon01` aus, siehe Offene Punkte.
+
+
+## 📜 Logging
+
+Die Logs von `cal01` gehen noch nicht an Loki auf `mon01`. Geplant ist Alloy wie auf `pve01`, siehe Offene Punkte.
 
 
 ## 💾 Backup
 
-Container-Backup per `vzdump` auf `pve01`s `hdd-backup`, geplanter Job zusammen mit `proxy01`: wöchentlich `mon 00:05`, letzte 4 Sicherungen behalten, verpasste Läufe werden nachgeholt. Job-Definition: [`configs/proxmox/jobs.cfg`](../configs/proxmox/jobs.cfg)
+Komplett über den Container-Job auf `pve01` (siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-backup)). Die Sicherung enthält auch die Firewall-Regeln des Containers. Die eigentlichen Nutzdaten sind nur der Ordner `/var/lib/radicale/collections` mit einzelnen `.ics`- und `.vcf`-Dateien, dazu der Git-Verlauf im selben Ordner.
 
-Die eigentlichen Nutzdaten sind nur der Ordner `/var/lib/radicale/collections` (einzelne `.ics`/`.vcf`-Dateien). Zusätzlich Proxmox-Snapshots an jedem Meilenstein des Aufbaus, die aber auf demselben Storage wie der Container liegen und kein Backup ersetzen.
-
-Die Firewall-Regeln (`/etc/pve/firewall/121.fw`) liegen auf dem Host und sind im Config-Backup von `pve01` enthalten.
+Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederherstellung.md)
 
 
 ## 📝 Offene Punkte
 
-- Direktzugriff aus dem Trusted-VLAN (Port 5232) schließen, sobald der Weg über `proxy01` sich bewährt hat
-- Eigener Radicale-User für den KI-Assistenten, Rechte dann per Regeldatei statt `owner_only`
-- Monitoring von `cal01` (Node-Exporter)
+- Rückfallweg (Port 5232 aus Trusted) schließen
+- Strecke Proxy -> Radicale mit einer internen CA (Certificate Authority) verschlüsseln
+- Dienst-Prüfung von `cal01` mit Alert bei Ausfall (Blackbox-Exporter, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md))
+- Logs per Alloy an Loki auf `mon01` schicken

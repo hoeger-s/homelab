@@ -121,7 +121,6 @@ Regeldateien: [`configs/pve01/firewall/`](../configs/pve01/firewall/)
 > Die Firewall-Dateien liegen auf dem Host unter `/etc/pve/firewall/`, nicht in den Containern. Die Regeln eines Containers nimmt seine Sicherung mit, ein Snapshot nicht. `cluster.fw` mit den Aliasen und den Regeln für den Host kommt nur mit der Host-Sicherung von `pve01`.
 
 
-
 ## 📊 Monitoring
 
 Läuft nativ auf `pve01`, Prometheus auf `mon01` fragt die Werte ab (Scraping). Der komplette Monitoring-Stack mit Alert-Regeln ist in [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md) beschrieben.
