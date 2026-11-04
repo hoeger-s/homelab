@@ -185,7 +185,7 @@ Teleport, das zweite VPN von UniFi, ist abgeschaltet. Jeder Zugang, den es nicht
 | Smart-Home | IoT | nur 2,4 GHz | WPA2 |
 | Gäste | Gäste | 2,4 + 5 GHz | WPA2/WPA3, Client-Isolation |
 
-Das IoT-WLAN nutzt aus Kompatibilitätsgründen nur 2,4 GHz und reines WPA2. Viele Smart-Home-Geräte unterstüzen weder 5 GHz noch WPA3. Das Netz ist über seine Zone ohnehin vom Rest getrennt.
+Das IoT-WLAN nutzt aus Kompatibilitätsgründen nur 2,4 GHz und reines WPA2. Viele Smart-Home-Geräte unterstützen weder 5 GHz noch WPA3. Das Netz ist über seine Zone ohnehin vom Rest getrennt.
 
 Der Access Point wird über das Management-VLAN verwaltet. Die WLANs und das Management-VLAN hängen getaggt an seinem Port, das native VLAN bleibt Default. Ein Wechsel des nativen VLANs am laufenden Access Point kann ihn von der UniFi-Verwaltung im Gateway trennen. Getaggt lässt er sich ohne dieses Risiko verwalten.
 
