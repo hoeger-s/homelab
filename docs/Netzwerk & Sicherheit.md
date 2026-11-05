@@ -120,7 +120,7 @@ Adressen stehen in den Regeln nie direkt, sondern über Netzwerklisten (`proxy01
 | mon01 zu pve01 | `mon01` | `pve01` | 22, 8006, 9100, 9835 | Exporter, Proxmox-API, Host-Sicherung |
 | pve01 zu mon01 | `pve01` | `mon01` | 3100 | Logs an Loki |
 
-Server und Container werden nur von der Workstation aus verwaltet (Least-Privilege-Prinzip). Andere Endgeräte verwalten im Homelab nichts. Die Workstation hat ihre Adresse fest per DHCP-Reservierung und hängt per Ethernet am Gateway. Über WLAN bekäme sie eine andere Adresse und hätte keinen Admin-Zugriff mehr. Eine Regel nach Adresse prüft nur, woher eine Verbindung kommt, nicht wer dahintersitzt. Wer schon im Trusted-Netz ist, könnte seinem Gerät die Adresse der Workstation von Hand geben. Die Regeln halten also alle anderen Geräte von den Anmeldungen fern. Geschützt sind die Zugänge selbst durch die Anmeldung. SSH geht nur mit Schlüssel und die Proxmox-Weboberfläche verlangt zusätzlich einen zweiten Faktor (MFA).
+Server und Container werden nur von der Workstation aus verwaltet (Least-Privilege-Prinzip). Andere Endgeräte verwalten im Homelab nichts. Die Workstation hat ihre Adresse fest per DHCP-Reservierung und hängt per Ethernet am Gateway. Über WLAN bekäme sie eine andere Adresse und hätte keinen Admin-Zugriff mehr. Eine Regel nach Adresse prüft nur, woher eine Verbindung kommt, nicht wer dahintersitzt. Wer schon im Trusted-Netz ist, könnte seinem Gerät die Adresse der Workstation von Hand geben. Die Regeln halten also alle anderen Geräte von den Anmeldungen fern. Geschützt sind die Zugänge selbst durch die Anmeldung. SSH geht nur mit Schlüssel und die Weboberflächen von Proxmox und UniFi verlangen zusätzlich einen zweiten Faktor (MFA).
 
 **Sperren und Einschränkungen**
 

@@ -13,7 +13,7 @@ Basis-Hypervisor des Homelabs. Trägt aktuell alle Container und künftig auch d
 | Kerne / Threads | 8 Kerne / 8 Threads |
 | RAM | 32 GB DDR4 3200 MHz |
 | GPU | Zotac RTX 3070 Ti 8 GB VRAM |
-| Mainboard | ASUS ROG STRIX Z390-I Gaming |
+| Mainboard | ASUS ROG STRIX Z390-I GAMING |
 | BIOS | Version 3006 (12.10.2021) |
 | Systemlaufwerk | Samsung SSD 970 EVO Plus 256 GB NVMe |
 | Zusatz-Storage 1 | SanDisk SSD 2 TB SATA |
