@@ -7,7 +7,7 @@ set -euo pipefail
 shopt -s nullglob
 
 HOST="mon01"
-TARGET="<admin-user>@10.0.99.10"                     # pve01 (Management-VLAN seit Phase 5, 22.10.2026)
+TARGET="<admin-user>@10.0.99.10"                     # pve01 (Management-VLAN 99)
 SSH_DIR="/home/<admin-user>/.ssh"
 KEY="$SSH_DIR/pve01-backup"                        # erzwingt dort: scp -t /mnt/hdd-storage/host-backups/
 GRAFANA_CONTAINER="grafana"

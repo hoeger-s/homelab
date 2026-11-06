@@ -3,7 +3,7 @@ global:
   evaluation_interval: 15s
 
 # instance = fester Name des Rechners statt Adresse:Port.
-# Ein Adresswechsel ändert nur noch die Zeile „targets“ des jeweiligen Ziels.
+# Ein Adresswechsel ändert nur die Zeile „targets“ des jeweiligen Ziels.
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
