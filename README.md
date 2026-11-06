@@ -105,6 +105,8 @@ Prometheus sammelt die Metriken von `pve01` samt Containern und von `mon01`, Gra
 ![Grafana-Dashboard](assets/screenshots/Grafana-Dashboard_v3.png)
 <sub>*Grafana-Dashboard "Homelab Overview"*</sub>
 
+> Bei "Virtual Machines" steht "No data", weil auf `pve01` derzeit keine VMs laufen.
+
 Details: [mon01 - Monitoring Host](docs/mon01%20-%20Monitoring%20Host.md)
 
 
@@ -209,7 +211,6 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 | Reverse Proxy & TLS | [proxy01 - Reverse Proxy](docs/proxy01%20-%20Reverse%20Proxy.md) |
 | Kalender, Aufgaben & Kontakte | [cal01 - Kalender Server](docs/cal01%20-%20Kalender%20Server.md) |
 | Backups und Wiederherstellung | [Backup & Wiederherstellung](docs/Backup%20&%20Wiederherstellung.md) |
-| Begriffe einfach erklärt | [Glossar](docs/Glossar.md) |
 
 
 # 📬 Kontakt
