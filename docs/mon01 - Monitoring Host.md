@@ -101,7 +101,7 @@ Sieben Container unter `/opt/monitoring` (siehe Storage-Layout). Alle Images lau
 | Container | Image | Port | Zweck |
 |---|---|---|---|
 | `prometheus` | `prom/prometheus` | 9090 (intern) | Metriken sammeln und speichern, Aufbewahrung 30 Tage |
-| `alertmanager` | `prom/alertmanager` | 9093 (intern) | Alarme bündeln und weiterleiten |
+| `alertmanager` | `prom/alertmanager` | 9093 (intern) | Alerts bündeln und weiterleiten |
 | `node-exporter` | `prom/node-exporter` | 9100 (intern) | OS-Metriken von `mon01` |
 | `grafana` | `grafana/grafana` | 3000 | Dashboards |
 | `loki` | `grafana/loki` | 3100 | Logs speichern, Aufbewahrung 7 Tage |
@@ -120,13 +120,13 @@ Compose-Datei: [`configs/mon01/monitoring/docker-compose.yml`](../configs/mon01/
 | `pve_exporter` | `10.0.99.10` | `pve01` | Proxmox-API über `pve-exporter:9221` (Container, Storage-Pools) |
 | `nvidia_gpu_pve01` | `10.0.99.10:9835` | `pve01` | GPU-Metriken `pve01` |
 
-Jedes Ziel trägt den Hostnamen als `instance` statt der üblichen Kombination aus Adresse und Port. Alarmregeln und Dashboards beziehen sich nur auf diesen Namen. Ändert sich eine Adresse, wird nur die Zeile `targets` angepasst, die Verläufe laufen unter demselben Namen weiter.
+Jedes Ziel trägt den Hostnamen als `instance` statt der üblichen Kombination aus Adresse und Port. Alert-Regeln und Dashboards beziehen sich nur auf diesen Namen. Ändert sich eine Adresse, wird nur die Zeile `targets` angepasst, die Verläufe laufen unter demselben Namen weiter.
 
 Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitoring/prometheus/)
 
-**Alarm-Regeln (Prometheus-Regeldatei -> Alertmanager):**
+**Alert-Regeln (Prometheus-Regeldatei -> Alertmanager):**
 
-| Alarm | Bedingung | Severity |
+| Alert | Bedingung | Severity |
 |---|---|---|
 | `MonitoringDiskSpaceLow` | `mon01`: weniger als 15 % frei auf `/` für 10 min | warning |
 | `NodeExporterPve01Down` | Node-Exporter von `pve01` seit 2 min nicht erreichbar | critical |
@@ -135,7 +135,7 @@ Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitor
 | `Pve01GpuHigh` | GPU von `pve01` über 85 % für 5 min | warning |
 | `Pve01StoragePoolFull` | ein Storage-Pool von `pve01` über 85 % für 10 min | warning |
 
-> Der Alertmanager hat keinen Benachrichtigungskanal. Ausgelöste Alarme sind nur in Grafana und im Alertmanager selbst sichtbar.
+> Der Alertmanager hat keinen Benachrichtigungskanal. Ausgelöste Alerts sind nur in Grafana und im Alertmanager selbst sichtbar.
 
 **Dashboards in Grafana:**
 
@@ -195,8 +195,8 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 
 ## 📝 Offene Punkte
 
-- Benachrichtigungskanal für den Alertmanager, dazu Testalarme
-- Alarm, wenn eine Sicherung fehlschlägt oder zu alt ist
+- Benachrichtigungskanal für den Alertmanager, dazu Test-Alerts
+- Alert, wenn eine Sicherung fehlschlägt oder zu alt ist
 - Selbstüberwachung von `mon01` ausbauen (CPU, RAM, Zustand der Container) und eine Meldung von außen, wenn `mon01` ganz ausfällt
 - `proxy01` und `cal01` mit Dienst-Prüfung überwachen (Blackbox-Exporter)
 - Docker-Images auf feste Versionen pinnen statt `:latest`
