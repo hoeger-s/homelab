@@ -1,6 +1,6 @@
 # proxy01 - Reverse Proxy
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Zentraler Reverse Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<domain>` entgegen und leitet sie an den jeweiligen Dienst weiter. Endgeräte bauen eine verschlüsselte Verbindung über TLS (Transport Layer Security) nur bis zu `proxy01` auf. Caddy weist sich dabei mit einem Wildcard-Zertifikat von Let's Encrypt aus, dem alle Geräte von sich aus vertrauen. Kein Dienst ist aus dem Internet erreichbar, Zugriff von unterwegs nur über das WireGuard-VPN.
 
@@ -97,7 +97,7 @@ Installiert wurde Caddy aus dem offiziellen Caddy-APT-Repo, danach wurde es durc
 └── desec.conf                          # EnvironmentFile=/etc/caddy/desec.env
 ```
 
-Konfiguration: [`configs/proxy01/caddy/Caddyfile`](../configs/proxy01/caddy/Caddyfile)
+Konfiguration: [`configs/proxy01/caddy/`](../configs/proxy01/caddy/)
 
 **Angebundene Dienste:**
 

@@ -1,6 +1,6 @@
 # cal01 - Kalender Server
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV). iOS-Geräte und Thunderbird greifen über den Reverse Proxy darauf zu.
 

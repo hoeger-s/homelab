@@ -1,6 +1,6 @@
 # pve01 - Proxmox Host
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Basis-Hypervisor des Homelabs. Trägt aktuell alle Container und künftig auch die VMs, Übersicht siehe [Host, VM- und Container-Übersicht](Host,%20VM-%20und%20Container-%C3%9Cbersicht.md). `pve01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
 
@@ -133,6 +133,8 @@ Läuft nativ auf `pve01`, Prometheus auf `mon01` fragt die Werte ab (Scraping). 
 Beide Exporter laufen als eigene systemd-Services mit dediziertem System-User ohne Login. Zusätzlich fragt der PVE-Exporter auf `mon01` über die Proxmox-API den Status der Container und VMs sowie die Auslastung der Storage-Pools ab.
 
 > Voraussetzung für den GPU-Exporter: NVIDIA-Treiber `595.91.07` (`--dkms`), `nouveau` geblacklistet, da sonst der Treiber nach einem Reboot nicht lädt.
+
+Konfiguration: [`configs/pve01/exporter/`](../configs/pve01/exporter/)
 
 
 ## 📜 Logging (Alloy)

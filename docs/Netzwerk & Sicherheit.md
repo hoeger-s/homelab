@@ -1,6 +1,6 @@
 # Netzwerk & Sicherheit
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Wie das Heimnetz aufgeteilt ist, wer wohin darf und warum.
 

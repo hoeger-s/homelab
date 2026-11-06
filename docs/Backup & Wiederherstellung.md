@@ -1,6 +1,6 @@
 # Backup & Wiederherstellung
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Wie das Homelab gesichert wird und wie sich Container und Hosts im Ernstfall zurückholen lassen. Was auf dem einzelnen Host im Detail gesichert wird, steht in dessen Doku unter Backup, siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-backup) und [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md#-backup).
 

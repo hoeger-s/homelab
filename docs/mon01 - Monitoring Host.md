@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
@@ -76,6 +76,8 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
 **`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted und Loki von `pve01` erreichbar sein müssen.
 
 Die Vorlage von `ufw-docker` gibt alle privaten Netze pauschal frei (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Damit wirken die Regeln nur gegen Zugriffe aus dem Internet, nicht aus dem Heimnetz. In `/etc/ufw/after.rules` bleibt deshalb nur `172.16.0.0/12` freigegeben, das sind die Docker-Netze selbst. Ohne diese Zeile kämen Prometheus und PVE-Exporter nicht mehr an `pve01` heran.
+
+Konfiguration: [`configs/mon01/ufw/`](../configs/mon01/ufw/)
 
 **Regeln (`ufw`):**
 

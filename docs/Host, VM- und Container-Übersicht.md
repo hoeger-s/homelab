@@ -1,6 +1,6 @@
 # Host, VM- und Container-Übersicht
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Alle Rechner, Container und Netzwerkgeräte des Homelabs auf einen Blick. Details stehen in der Doku des jeweiligen Hosts, Netze und Firewall-Regeln unter [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
 

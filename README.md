@@ -1,6 +1,6 @@
 # 🛡️ Stefans Homelab
 
-Stand: 26.10.2026
+Stand: 06.11.2026
 
 Dieses Repository dokumentiert den schrittweisen Aufbau meines privaten Homelabs. Die Konfigurationsdateien der Server liegen versioniert mit im Repo.
 
@@ -102,7 +102,7 @@ Details: [cal01 - Kalender Server](docs/cal01%20-%20Kalender%20Server.md)
 
 Prometheus sammelt die Metriken von `pve01` samt Containern und von `mon01`, Grafana stellt sie dar. Alert-Regeln schlagen an, wenn CPU, RAM, GPU oder Storage knapp werden. Die Logs beider Hosts laufen zentral in Loki zusammen und lassen sich nach Host, Dienst und Schweregrad filtern.
 
-![Grafana-Dashboard](assets/screenshots/Grafana-Dashboard_v2.png)
+![Grafana-Dashboard](assets/screenshots/Grafana-Dashboard_v3.png)
 <sub>*Grafana-Dashboard "Homelab Overview"*</sub>
 
 Details: [mon01 - Monitoring Host](docs/mon01%20-%20Monitoring%20Host.md)
