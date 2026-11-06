@@ -1,0 +1,10 @@
+[Unit]
+Description=Taegliche Host-Sicherung mon01 um 02:30 (Aufbewahrung uebernimmt pve01)
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+# Nachholen, falls mon01 um 02:30 aus war
+Persistent=true
+
+[Install]
+WantedBy=timers.target

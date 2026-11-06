@@ -1,0 +1,19 @@
+# /etc/radicale/config auf cal01 (Radicale 3.5.3, Debian 13)
+# Benutzerdatei /etc/radicale/users (bcrypt) und Regeldatei /etc/radicale/rights liegen bewusst nicht im Repo
+
+[server]
+hosts = 0.0.0.0:5232
+
+[auth]
+type = htpasswd
+htpasswd_filename = /etc/radicale/users
+htpasswd_encryption = bcrypt
+
+[rights]
+type = from_file
+file = /etc/radicale/rights
+
+[storage]
+filesystem_folder = /var/lib/radicale/collections
+# Jede Änderung landet als git-Commit im Ordner, so lässt sich jeder Stand zurückholen
+hook = git add -A && (git diff --cached --quiet || git commit -m "Aenderung durch %(user)s")

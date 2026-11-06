@@ -1,0 +1,26 @@
+# /etc/caddy/Caddyfile auf proxy01
+# Der deSEC-Token kommt aus /etc/caddy/desec.env
+
+*.home.<domain> {
+	tls {
+		dns desec {
+			token {env.DESEC_TOKEN}
+		}
+		# deSEC verteilt neue Einträge mit Verzögerung, Let's Encrypt prüft von mehreren Standorten
+		propagation_delay 60s
+		propagation_timeout -1
+	}
+
+	# Kalender, Aufgaben und Kontakte (Radicale auf cal01)
+	@cal host cal.home.<domain>
+	handle @cal {
+		reverse_proxy 10.0.40.30:5232
+	}
+
+	# Die Weiterleitung zum KI-Assistenten (ki01) ist ein eigenes Projekt und nicht Teil dieses Repos
+
+	# Unbekannte Namen sofort abweisen
+	handle {
+		abort
+	}
+}

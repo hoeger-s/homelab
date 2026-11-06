@@ -1,0 +1,7 @@
+# /opt/monitoring/alertmanager/alertmanager.yml auf mon01
+# Noch ohne Benachrichtigungskanal (siehe Roadmap).
+route:
+  receiver: 'default'
+
+receivers:
+  - name: 'default'
