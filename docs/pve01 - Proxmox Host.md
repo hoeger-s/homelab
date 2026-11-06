@@ -139,7 +139,7 @@ Konfiguration: [`configs/pve01/exporter/`](../configs/pve01/exporter/)
 
 ## 📜 Logging (Alloy)
 
-Alloy (v1.19.2) liest das systemd-Journal und schickt es an Loki auf `mon01` (`10.0.40.90:3100`). Jeder Eintrag bekommt die Labels `host`, `job`, `unit` (welcher Dienst) und `level` (Schweregrad). Damit lässt sich in Grafana z. B. gezielt nach allen Fehlern eines Dienstes filtern.
+Alloy liest das systemd-Journal und schickt es an Loki auf `mon01` (`10.0.40.90:3100`). Jeder Eintrag bekommt die Labels `host`, `job`, `unit` (welcher Dienst) und `level` (Schweregrad). Damit lässt sich in Grafana z. B. gezielt nach allen Fehlern eines Dienstes filtern.
 
 Von sich aus vergibt Alloy nur ein Label, `job`, mit dem Namen des Bausteins. Die versteckten Zusatzfelder des Journals, etwa welcher Dienst eine Meldung geschrieben hat und wie ernst sie ist, verwirft Alloy dagegen, bevor es die Einträge an Loki schickt. Was davon ankommen soll, muss ausdrücklich als Label festgelegt werden. Übernommen werden nur Dienst (`unit`) und Schweregrad (`level`). Dazu kommt das fest gesetzte `host`. `job` erhält einen lesbaren Namen. Mehr wird bewusst nicht mitgenommen, denn Loki legt für jede Kombination von Labels einen eigenen Datenstrom an. Je mehr Labels, desto mehr Datenströme und desto langsamer wird Loki. Die Suche in Grafana würde dann zäh. Im schlimmsten Fall nimmt Loki gar keine neuen Einträge mehr an.
 
