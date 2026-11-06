@@ -1,0 +1,3 @@
+# Vorlage für /etc/radicale/users auf cal01 (Rechte 640 root:radicale)
+# Je Benutzer eine Zeile, Hash per bcrypt: htpasswd -B /etc/radicale/users <benutzername>
+<benutzername>:<bcrypt-hash>

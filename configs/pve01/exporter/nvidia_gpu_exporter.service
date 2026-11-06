@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA GPU Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=nvidia_gpu_exporter
+Group=nvidia_gpu_exporter
+Type=simple
+ExecStart=/usr/local/bin/nvidia_gpu_exporter --web.listen-address=:9835
+
+[Install]
+WantedBy=multi-user.target

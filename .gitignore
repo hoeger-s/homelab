@@ -5,3 +5,4 @@ manuals/
 *.env
 !*.env.example
 pve.yml
+configs/cal01/radicale/users
