@@ -96,7 +96,7 @@ Im Gateway kommen dazu die Regeln "Trusted zu mon01" (3000), "mon01 zu pve01" un
 
 ## 📊 Monitoring - Docker-Compose-Stack
 
-Sieben Container unter `/opt/monitoring` (siehe Storage-Layout). Jedes Images läuft mit einer festen Version, die in der Compose-Datei steht. So holt `docker compose pull` nie ungeplant eine neue Version. Außerdem ist jederzeit nachvollziehbar, was läuft. Neue Versionen werden nur von Hand eingetragen.
+Sieben Container unter `/opt/monitoring` (siehe Storage-Layout). Jedes Image läuft mit einer festen Version, die in der Compose-Datei steht. So holt `docker compose pull` nie ungeplant eine neue Version. Außerdem ist jederzeit nachvollziehbar, was läuft. Neue Versionen werden nur von Hand eingetragen.
 
 | Container | Image | Port | Zweck |
 |---|---|---|---|
