@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 06.11.2026
+Stand: 09.11.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
@@ -96,7 +96,7 @@ Im Gateway kommen dazu die Regeln "Trusted zu mon01" (3000), "mon01 zu pve01" un
 
 ## 📊 Monitoring - Docker-Compose-Stack
 
-Sieben Container unter `/opt/monitoring` (siehe Storage-Layout). Alle Images laufen auf `:latest`, siehe Offene Punkte.
+Sieben Container unter `/opt/monitoring` (siehe Storage-Layout). Jedes Images läuft mit einer festen Version, die in der Compose-Datei steht. So holt `docker compose pull` nie ungeplant eine neue Version. Außerdem ist jederzeit nachvollziehbar, was läuft. Neue Versionen werden nur von Hand eingetragen.
 
 | Container | Image | Port | Zweck |
 |---|---|---|---|
@@ -183,7 +183,7 @@ Konfiguration: [`configs/mon01/monitoring/alloy/config.alloy`](../configs/mon01/
     - eigene Skripte, darunter das Sicherungsskript selbst
     - die SSH-Schlüssel von `root` und Admin-User
     - die Daten von Grafana (Docker-Volume) mit Dashboards, Benutzern und der Loki-Datenquelle
-    - eine Liste aller installierten Pakete, `ufw status`, die laufenden Container und die genauen Image-Stände. Solange die Images auf `:latest` laufen, lässt sich so nach einer Wiederherstellung gezielt die vorherige Version holen
+    - eine Liste aller installierten Pakete, `ufw status`, die laufenden Container und die genauen Image-Stände
 - **Nicht gesichert:**
     - Grafana-Plugins, nur ihre Liste. Grafana lädt sie selbst nach. Mit Plugins wäre das Archiv rund 168 MB groß, ohne sind es rund 570 KB
     - Messwerte von Prometheus und Logs aus Loki
@@ -199,9 +199,7 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 - Alert, wenn eine Sicherung fehlschlägt oder zu alt ist
 - Selbstüberwachung von `mon01` ausbauen (CPU, RAM, Zustand der Container) und eine Meldung von außen, wenn `mon01` ganz ausfällt
 - `proxy01` und `cal01` mit Dienst-Prüfung überwachen (Blackbox-Exporter)
-- Docker-Images auf feste Versionen pinnen statt `:latest`
 - Grafana hinter den Reverse Proxy
 - `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA gibt
 - Loki meldet dauerhaft "Ingester not ready", obwohl Logs ankommen. Ursache klären
-- Ausstehende Updates einspielen
 - Ziele über DNS-Namen statt Adressen ansprechen (Prometheus, Backup-Skript, Alloy auf `pve01`)

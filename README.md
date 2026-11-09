@@ -1,6 +1,6 @@
 # 🛡️ Stefans Homelab
 
-Stand: 06.11.2026
+Stand: 09.11.2026
 
 Dieses Repository dokumentiert den schrittweisen Aufbau meines privaten Homelabs. Die Konfigurationsdateien der Server liegen versioniert mit im Repo.
 
@@ -179,8 +179,9 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 - [ ] IDS/IPS am Gateway, erst im Meldemodus
 - [ ] VPN-Netz aus `192.168.2.0/24` herausnehmen
 - [ ] Server untereinander über ihre `.internal`-Namen ansprechen
-- [ ] Docker-Images auf `mon01` auf feste Versionen pinnen
-- [ ] Ausstehende Updates einspielen, Nesting für die Container
+- [x] Docker-Images auf `mon01` auf feste Versionen pinnen
+- [x] Ausstehende Updates einspielen, Nesting für die Container
+- [ ] Sicherheitsupdates der Container und von `mon01` automatisch einspielen, alles Weitere an einem festen monatlichen Patchtag
 
 **Mit neuen Diensten**
 - [ ] Dienst-Prüfung für `proxy01` und `cal01` mit Alert bei Ausfall und bei bald ablaufendem Zertifikat (Blackbox-Exporter)

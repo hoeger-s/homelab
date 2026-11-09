@@ -1,6 +1,6 @@
 services:
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.15.1
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -12,7 +12,7 @@ services:
       - '--storage.tsdb.retention.time=30d'
 
   alertmanager:
-    image: prom/alertmanager:latest
+    image: prom/alertmanager:v0.34.2
     container_name: alertmanager
     restart: unless-stopped
     volumes:
@@ -22,7 +22,7 @@ services:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.12.1
     container_name: node-exporter
     restart: unless-stopped
     volumes:
@@ -36,7 +36,7 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.3.0
     container_name: grafana
     restart: unless-stopped
     ports:
@@ -49,7 +49,7 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.9
     container_name: loki
     restart: unless-stopped
     ports:
@@ -60,7 +60,7 @@ services:
     command: -config.file=/etc/loki/loki-config.yml
 
   alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:v1.21.3
     container_name: alloy
     restart: unless-stopped
     volumes:
@@ -74,7 +74,7 @@ services:
       - --server.http.listen-addr=0.0.0.0:12345
 
   pve-exporter:
-    image: prompve/prometheus-pve-exporter:latest
+    image: prompve/prometheus-pve-exporter:3.11.0
     container_name: pve-exporter
     restart: unless-stopped
     volumes:

@@ -1,6 +1,6 @@
 # proxy01 - Reverse Proxy
 
-Stand: 06.11.2026
+Stand: 09.11.2026
 
 Zentraler Reverse Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<domain>` entgegen und leitet sie an den jeweiligen Dienst weiter. Endgeräte bauen eine verschlüsselte Verbindung über TLS (Transport Layer Security) nur bis zu `proxy01` auf. Caddy weist sich dabei mit einem Wildcard-Zertifikat von Let's Encrypt aus, dem alle Geräte von sich aus vertrauen. Kein Dienst ist aus dem Internet erreichbar, Zugriff von unterwegs nur über das WireGuard-VPN.
 
@@ -134,4 +134,3 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 - Strecke Proxy -> Dienst mit einer internen CA verschlüsseln
 - Dienst-Prüfung von `proxy01` mit Alert bei Ausfall und bei bald ablaufendem Zertifikat (Blackbox-Exporter, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md))
 - Logs per Alloy an Loki auf `mon01` schicken
-- Ausstehende Updates einspielen

@@ -1,6 +1,6 @@
 # pve01 - Proxmox Host
 
-Stand: 06.11.2026
+Stand: 09.11.2026
 
 Basis-Hypervisor des Homelabs. Trägt aktuell alle Container und künftig auch die VMs, Übersicht siehe [Host, VM- und Container-Übersicht](Host,%20VM-%20und%20Container-%C3%9Cbersicht.md). `pve01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
 
@@ -171,4 +171,3 @@ Alles Weitere, auch zur Wiederherstellung: [Backup & Wiederherstellung](Backup%2
 - Kopie der Backups außer Haus
 - `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA (Certificate Authority) gibt
 - Zertifikat der Weboberfläche ist selbst signiert, wird mit der internen CA ersetzt
-- Ausstehende Updates einspielen
