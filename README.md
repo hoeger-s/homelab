@@ -155,7 +155,7 @@ homelab/
 │   ├── pve01/              # Netzwerk, Proxmox-Firewall (auch für die Container), Backup-Job, Host-Sicherung, Alloy
 │   ├── mon01/              # kompletter Monitoring-Stack (= /opt/monitoring), Host-Sicherung, automatische Updates
 │   ├── proxy01/            # Caddyfile, automatische Updates
-│   └── cal01/              # Radicale, automatische Updats
+│   └── cal01/              # Radicale, automatische Updates
 └── docs/                   # Doku je Host und lab-weite Themen, siehe unten
 ```
 
@@ -213,7 +213,7 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 | Reverse Proxy & TLS | [proxy01 - Reverse Proxy](docs/proxy01%20-%20Reverse%20Proxy.md) |
 | Kalender, Aufgaben & Kontakte | [cal01 - Kalender Server](docs/cal01%20-%20Kalender%20Server.md) |
 | Backups und Wiederherstellung | [Backup & Wiederherstellung](docs/Backup%20&%20Wiederherstellung.md) |
-| Updates, Patchtag, Docker-Images | [Updates & Patchmanagement](docs/Updates%20&%20Patchmanagement.md) |
+| Updates, Patchday, Docker-Images | [Updates & Patchmanagement](docs/Updates%20&%20Patchmanagement.md) |
 
 
 # 📬 Kontakt

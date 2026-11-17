@@ -71,7 +71,7 @@ Im Gateway kommen dazu die Regeln "Trusted zu proxy01" (80, 443) und "VPN zu pro
 
 **Automatische Updates:** `unattended-upgrades` spielt jeden Morgen um 05:00 die Sicherheitsupdates von Debian ein (nur aus `trixie-security`). Das liegt nach der nächtlichen Sicherung um 03:00, der Stand direkt vor dem Update ist also immer gesichert. Danach startet `needrestart` die Dienste neu, die noch die alten Bibliotheken geladen haben. Einen Neustart des Containers braucht es dafür nicht, da er keinen eigenen Kernel hat. Caddy kommt aus einem fremden Repo und ist zusätzlich per `dpkg-divert` geschützt (siehe Caddy), er wird also nie automatisch aktualisiert. Alle übrigen Updates kommen von Hand am monatlichen Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md).
 
-Konfiguration: [`configs/cal01/auto-updates/`](../configs/cal01/auto-updates/)
+Konfiguration: [`configs/proxy01/auto-updates/`](../configs/proxy01/auto-updates/)
 
 
 ## 🔒 Zertifikate & DNS

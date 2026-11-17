@@ -79,7 +79,7 @@ Geplant ist eine verschlüsselte Sicherung außer Haus. Erst danach kommen Diens
 
 ## 🔧 Snapshots
 
-Vor jedem größeren Umbau bekommt jeder betroffene Container einen Snapshot mit aussagekräftigem Namen (z. B. `vor-update-JJJJ-MM` am Patchtag, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md)). Snapshots liegen auf derselben Platte wie der Container und ersetzen kein Backup. Sie sind der schnelle Rückweg, falls ein Schritt schiefgeht oder sich eine Einstellung als Fehler herausstellt.
+Vor jedem größeren Umbau bekommt jeder betroffene Container einen Snapshot mit aussagekräftigem Namen (z. B. `vor-update-JJJJ-MM` am Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md)). Snapshots liegen auf derselben Platte wie der Container und ersetzen kein Backup. Sie sind der schnelle Rückweg, falls ein Schritt schiefgeht oder sich eine Einstellung als Fehler herausstellt.
 
 
 ## 📝 Offene Punkte
