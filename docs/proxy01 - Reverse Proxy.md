@@ -1,6 +1,6 @@
 # proxy01 - Reverse Proxy
 
-Stand: 09.11.2026
+Stand: 17.11.2026
 
 Zentraler Reverse Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<domain>` entgegen und leitet sie an den jeweiligen Dienst weiter. Endgeräte bauen eine verschlüsselte Verbindung über TLS (Transport Layer Security) nur bis zu `proxy01` auf. Caddy weist sich dabei mit einem Wildcard-Zertifikat von Let's Encrypt aus, dem alle Geräte von sich aus vertrauen. Kein Dienst ist aus dem Internet erreichbar, Zugriff von unterwegs nur über das WireGuard-VPN.
 
@@ -43,6 +43,7 @@ DNS-Server und Suchdomäne stehen ebenfalls fest in der Container-Konfiguration.
 - Separater Admin-User mit `sudo` und SSH-Key
 - Root- und Passwort-Login per SSH deaktiviert
 - Proxmox-Firewall statt `ufw`, Default-Policy `DROP` in beide Richtungen
+- Sicherheitsupdates automatisch, siehe unten
 
 Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht oder verlässt. Wer im Container `root` ist, kann die Regeln deshalb weder sehen noch lockern. Mit `ufw` lägen sie im Container selbst. Auch ausgehend ist nur erlaubt, was der Proxy für seine Aufgaben braucht: DNS, Zeit, Web für Updates, Zertifikate und Weiterleitungen sowie Radicale auf `cal01`. Ein übernommener Proxy kann sich so kaum weiter im Homelab ausbreiten.
 
@@ -67,6 +68,10 @@ Regeldatei: [`configs/pve01/firewall/120.fw`](../configs/pve01/firewall/120.fw)
 Im Gateway kommen dazu die Regeln "Trusted zu proxy01" (80, 443) und "VPN zu proxy01" (443), siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-im-gateway-zonen). Die VPN-Zone darf ins Homelab nur hierher, alle anderen Wege aus dem VPN sind gesperrt. Von unterwegs gibt es damit genau eine Tür. Dahinter verlangt jeder Dienst eine Anmeldung. Da die Anmeldung auf den eigenen Geräten aber meist gespeichert ist, sollte bei Verlust eines Geräts dessen VPN-Profil im Gateway gesperrt werden.
 
 > Die Regeln liegen auf `pve01` unter `/etc/pve/firewall/120.fw`.
+
+**Automatische Updates:** `unattended-upgrades` spielt jeden Morgen um 05:00 die Sicherheitsupdates von Debian ein (nur aus `trixie-security`). Das liegt nach der nächtlichen Sicherung um 03:00, der Stand direkt vor dem Update ist also immer gesichert. Danach startet `needrestart` die Dienste neu, die noch die alten Bibliotheken geladen haben. Einen Neustart des Containers braucht es dafür nicht, da er keinen eigenen Kernel hat. Caddy kommt aus einem fremden Repo und ist zusätzlich per `dpkg-divert` geschützt (siehe Caddy), er wird also nie automatisch aktualisiert. Alle übrigen Updates kommen von Hand am monatlichen Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md).
+
+Konfiguration: [`configs/cal01/auto-updates/`](../configs/cal01/auto-updates/)
 
 
 ## 🔒 Zertifikate & DNS

@@ -1,6 +1,6 @@
 # cal01 - Kalender Server
 
-Stand: 06.11.2026
+Stand: 17.11.2026
 
 Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV). iOS-Geräte und Thunderbird greifen über den Reverse Proxy darauf zu.
 
@@ -44,6 +44,7 @@ DNS-Server und Suchdomäne stehen ebenfalls fest in der Container-Konfiguration.
 - Root- und Passwort-Login per SSH deaktiviert
 - Proxmox-Firewall statt `ufw`, Default-Policy `DROP` in beide Richtungen
 - Radicale läuft als eigener System-User `radicale`, nicht als root
+- Sicherheitsupdates automatisch, siehe unten
 
 Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht oder verlässt. Wer im Container `root` ist, kann die Regeln deshalb weder sehen noch lockern. Mit `ufw` lägen sie im Container selbst. Auch ausgehend ist nur erlaubt, was der Container für Updates braucht: DNS, Zeit und Web. Radicale selbst baut keine Verbindungen nach außen auf. Ein übernommener Kalender-Server kann sich so kaum weiter im Homelab ausbreiten.
 
@@ -65,6 +66,10 @@ Regeldatei: [`configs/pve01/firewall/121.fw`](../configs/pve01/firewall/121.fw)
 Im Gateway kommt dazu die Regel "Trusted zu cal01" (5232) für den Rückfallweg, siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-im-gateway-zonen). Der normale Weg geht über `proxy01`. Über den Rückfallweg am Proxy vorbei bleiben Kalender, Aufgaben und Kontakte aus dem Heimnetz auch bei einem Ausfall von `proxy01` erreichbar.
 
 > Die Regeln liegen auf `pve01` unter `/etc/pve/firewall/121.fw`.
+
+**Automatische Updates:** `unattended-upgrades` spielt jeden Morgen um 05:00 die Sicherheitsupdates von Debian ein (nur aus `trixie-security`). Das liegt nach der nächtlichen Sicherung um 03:00, der Stand direkt vor dem Update ist also immer gesichert. Danach startet `needrestart` die Dienste neu, die noch die alten Bibliotheken geladen haben. Einen Neustart des Containers braucht es dafür nicht, da er keinen eigenen Kernel hat. Alle übrigen Updates kommen von Hand am monatlichen Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md).
+
+Konfiguration: [`configs/cal01/auto-updates/`](../configs/cal01/auto-updates/)
 
 
 ## 📅 Radicale

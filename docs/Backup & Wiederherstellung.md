@@ -1,6 +1,6 @@
 # Backup & Wiederherstellung
 
-Stand: 06.11.2026
+Stand: 17.11.2026
 
 Wie das Homelab gesichert wird und wie sich Container und Hosts im Ernstfall zurückholen lassen. Was auf dem einzelnen Host im Detail gesichert wird, steht in dessen Doku unter Backup, siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-backup) und [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md#-backup).
 
@@ -79,7 +79,7 @@ Geplant ist eine verschlüsselte Sicherung außer Haus. Erst danach kommen Diens
 
 ## 🔧 Snapshots
 
-Vor jedem größeren Umbau bekommt jeder betroffene Container einen Snapshot mit aussagekräftigem Namen (z. B. `vor-update`, `nach-update`). Snapshots liegen auf derselben Platte wie der Container und ersetzen kein Backup. Sie sind der schnelle Rückweg, falls ein Schritt schiefgeht oder sich eine Einstellung als Fehler herausstellt.
+Vor jedem größeren Umbau bekommt jeder betroffene Container einen Snapshot mit aussagekräftigem Namen (z. B. `vor-update-JJJJ-MM` am Patchtag, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md)). Snapshots liegen auf derselben Platte wie der Container und ersetzen kein Backup. Sie sind der schnelle Rückweg, falls ein Schritt schiefgeht oder sich eine Einstellung als Fehler herausstellt.
 
 
 ## 📝 Offene Punkte

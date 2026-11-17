@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 09.11.2026
+Stand: 17.11.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
@@ -72,6 +72,7 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
 - PVE-Exporter mit nur lesendem API-Token (Rolle `PVEAuditor`, siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md)), ohne SSL-Verifikation (`verify_ssl: false`), da `pve01` ein selbst signiertes Zertifikat hat
 - Host-Firewall `ufw`, Default-Policy `deny` (Input), `allow` (Output), `deny` (Routed)
     - [`ufw-docker`](https://github.com/chaifeng/ufw-docker) installiert, siehe unten
+- Sicherheitsupdates automatisch, siehe unten
 
 **`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted und Loki von `pve01` erreichbar sein müssen.
 
@@ -92,6 +93,10 @@ Konfiguration: [`configs/mon01/ufw/`](../configs/mon01/ufw/)
 Im Gateway kommen dazu die Regeln "Trusted zu mon01" (3000), "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
 
 > Grafana (3000) und Loki (3100) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
+
+**Automatische Updates:** `unattended-upgrades` spielt jeden Morgen um 05:00 die Sicherheitsupdates von Debian ein (nur aus `trixie-security`). Das liegt nach der Host-Sicherung um 02:30, der Stand direkt vor dem Update ist also immer gesichert. Danach startet `needrestart` die Dienste neu, die noch die alten Bibliotheken geladen haben. Kommt ein neuer Kernel, startet `mon01` direkt nach dem Update selbst neu, die Container Stacks kommen danach von allein wieder hoch. Docker stammt aus dem Docker-Repo und bleibt, genau wie die Images des Stacks, außen vor. Beides und alle übrigen Updates kommen von Hand am monatlichen Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md).
+
+Konfiguration: [`configs/mon01/auto-updates/`](../configs/mon01/auto-updates/)
 
 
 ## 📊 Monitoring - Docker-Compose-Stack

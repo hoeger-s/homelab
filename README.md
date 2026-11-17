@@ -1,6 +1,6 @@
 # 🛡️ Stefans Homelab
 
-Stand: 09.11.2026
+Stand: 17.11.2026
 
 Dieses Repository dokumentiert den schrittweisen Aufbau meines privaten Homelabs. Die Konfigurationsdateien der Server liegen versioniert mit im Repo.
 
@@ -77,6 +77,7 @@ Die Absicherung ist in Schichten aufgebaut. Fällt eine weg, hält die nächste.
 | Host-Firewall | `pve01`, `mon01` | Proxmox-Firewall für Host und Container, `ufw` auf `mon01`. Jeder Container hat zusätzlich eine eigene Firewall mit `DROP` in beide Richtungen. |
 | Admin-Zugriff | Server und Container | SSH und Weboberflächen nur von der Workstation aus, nicht aus dem ganzen Heimnetz. |
 | Anmeldung | Hosts und Gateway | SSH mit Schlüssel, kein Root-Login per SSH, Proxmox- und UniFi-Weboberfläche mit MFA. |
+| Updates | Hosts, Container und Netzwerkgeräte | Sicherheitsupdates der Debian-Systeme täglich automatisch, alles Weitere am monatlichen Patchday von Hand. Gateway und Access Point aktualisieren sich selbst. |
 
 
 ## 🔀 Reverse Proxy & Zertifikate
@@ -152,9 +153,9 @@ homelab/
 ├── assets/                 # Bilder, Logos, Screenshots
 ├── configs/
 │   ├── pve01/              # Netzwerk, Proxmox-Firewall (auch für die Container), Backup-Job, Host-Sicherung, Alloy
-│   ├── mon01/              # kompletter Monitoring-Stack (= /opt/monitoring), Host-Sicherung
-│   ├── proxy01/            # Caddyfile
-│   └── cal01/              # Radicale
+│   ├── mon01/              # kompletter Monitoring-Stack (= /opt/monitoring), Host-Sicherung, automatische Updates
+│   ├── proxy01/            # Caddyfile, automatische Updates
+│   └── cal01/              # Radicale, automatische Updats
 └── docs/                   # Doku je Host und lab-weite Themen, siehe unten
 ```
 
@@ -181,7 +182,7 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 - [ ] Server untereinander über ihre `.internal`-Namen ansprechen
 - [x] Docker-Images auf `mon01` auf feste Versionen pinnen
 - [x] Ausstehende Updates einspielen, Nesting für die Container
-- [ ] Sicherheitsupdates der Container und von `mon01` automatisch einspielen, alles Weitere an einem festen monatlichen Patchtag
+- [x] Sicherheitsupdates der Container und von `mon01` automatisch einspielen, alles Weitere an einem festen monatlichen Patchtag
 
 **Mit neuen Diensten**
 - [ ] Dienst-Prüfung für `proxy01` und `cal01` mit Alert bei Ausfall und bei bald ablaufendem Zertifikat (Blackbox-Exporter)
@@ -212,6 +213,7 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 | Reverse Proxy & TLS | [proxy01 - Reverse Proxy](docs/proxy01%20-%20Reverse%20Proxy.md) |
 | Kalender, Aufgaben & Kontakte | [cal01 - Kalender Server](docs/cal01%20-%20Kalender%20Server.md) |
 | Backups und Wiederherstellung | [Backup & Wiederherstellung](docs/Backup%20&%20Wiederherstellung.md) |
+| Updates, Patchtag, Docker-Images | [Updates & Patchmanagement](docs/Updates%20&%20Patchmanagement.md) |
 
 
 # 📬 Kontakt

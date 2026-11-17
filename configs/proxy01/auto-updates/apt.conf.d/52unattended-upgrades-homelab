@@ -1,0 +1,5 @@
+// Homelab: nur Sicherheitsupdates automatisch, alles andere am Patchday
+#clear Unattended-Upgrade::Origins-Pattern;
+Unattended-Upgrade::Origins-Pattern {
+        "origin=Debian,codename=${distro_codename}-security,label=Debian-Security";
+};
