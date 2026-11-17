@@ -182,7 +182,7 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 - [ ] Server untereinander über ihre `.internal`-Namen ansprechen
 - [x] Docker-Images auf `mon01` auf feste Versionen pinnen
 - [x] Ausstehende Updates einspielen, Nesting für die Container
-- [x] Sicherheitsupdates der Container und von `mon01` automatisch einspielen, alles Weitere an einem festen monatlichen Patchtag
+- [x] Sicherheitsupdates der Container und von `mon01` automatisch einspielen, alles Weitere an einem festen monatlichen Patchday
 
 **Mit neuen Diensten**
 - [ ] Dienst-Prüfung für `proxy01` und `cal01` mit Alert bei Ausfall und bei bald ablaufendem Zertifikat (Blackbox-Exporter)
