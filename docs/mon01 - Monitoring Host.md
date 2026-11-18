@@ -79,7 +79,7 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
     - [`ufw-docker`](https://github.com/chaifeng/ufw-docker) installiert, siehe unten
 - Sicherheitsupdates automatisch, siehe unten
 
-**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted und Loki von `pve01` und ntfy von `proxy01` erreichbar sein müssen.
+**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted, Loki von `pve01` und ntfy von `proxy01` erreichbar sein müssen.
 
 Die Vorlage von `ufw-docker` gibt alle privaten Netze pauschal frei (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Damit wirken die Regeln nur gegen Zugriffe aus dem Internet, nicht aus dem Heimnetz. In `/etc/ufw/after.rules` bleibt deshalb nur `172.16.0.0/12` freigegeben, das sind die Docker-Netze selbst. Ohne diese Zeile kämen Prometheus und PVE-Exporter nicht mehr an `pve01` heran.
 
@@ -96,7 +96,7 @@ Konfiguration: [`configs/mon01/ufw/`](../configs/mon01/ufw/)
 
 Im Gateway kommen dazu die Regeln "Trusted zu mon01" (3000), "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
 
-> Grafana (3000) und Loki (3100) und ntfy (2586) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
+> Grafana (3000), Loki (3100) und ntfy (2586) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
 
 **Automatische Updates:** `unattended-upgrades` spielt jeden Morgen um 05:00 die Sicherheitsupdates von Debian ein (nur aus `trixie-security`). Das liegt nach der Host-Sicherung um 02:30, der Stand direkt vor dem Update ist also immer gesichert. Danach startet `needrestart` die Dienste neu, die noch die alten Bibliotheken geladen haben. Kommt ein neuer Kernel, startet `mon01` direkt nach dem Update selbst neu, die Container des Stacks kommen danach von allein wieder hoch. Docker stammt aus dem Docker-Repo und bleibt, genau wie die Images des Stacks, außen vor. Beides und alle übrigen Updates kommen von Hand am monatlichen Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md).
 
@@ -145,7 +145,7 @@ Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitor
 | `Pve01GpuHigh` | GPU von `pve01` über 85 % für 5 min | warning |
 | `Pve01StoragePoolFull` | ein Storage-Pool von `pve01` über 85 % für 10 min | warning |
 
-> Ausgelöste Alerts schickt der Alertmanager an ntfy, siehe Benachrichtigungen.
+> Ausgelöste Alerts schickt der Alertmanager an ntfy, siehe [Benachrichtigungen](#-benachrichtigungen-ntfy).
 
 **Dashboards in Grafana:**
 
