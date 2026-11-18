@@ -1,9 +1,9 @@
 # mon01 - Monitoring Host
 
-Stand: 17.11.2026
+Stand: 18.11.2026
 
 
-Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
+Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, ntfy, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
 
 Das Monitoring läuft bewusst auf eigener Hardware und nicht als Container auf `pve01`. Sonst wäre bei einem Ausfall von `pve01` auch das Monitoring weg, genau dann, wenn man es braucht.
 
@@ -34,7 +34,7 @@ Das Monitoring läuft bewusst auf eigener Hardware und nicht als Container auf `
 | DNS | 10.0.40.1, ohne Suchdomäne |
 | VLAN | Homelab (VLAN 40) |
 | Switchport | Port 3, Profil Homelab-Access |
-| Weboberfläche | Grafana `http://10.0.40.90:3000` bzw. `http://mon01.internal:3000` |
+| Weboberfläche | Grafana `http://10.0.40.90:3000` bzw. `http://mon01.internal:3000`, ntfy `https://ntfy.home.<domain>` über `proxy01` |
 
 Die IP-Adresse ist fest auf dem Host eingetragen und wird nicht per DHCP vom UniFi-Gateway vergeben. So startet `mon01` auch dann mit seiner Adresse, wenn das Gateway gerade nicht antwortet. Eine zusätzliche Reservierung im Gateway gibt es bewusst nicht, damit die Adresse nur an einer Stelle gepflegt wird. Unter `mon01.internal` ist der Host per DNS-Eintrag im Gateway erreichbar.
 
@@ -44,7 +44,7 @@ Die IP-Adresse ist fest auf dem Host eingetragen und wird nicht per DHCP vom Uni
 ## 💾 Storage-Layout
 
 Debian-Standard-Partitionierung, eine Partition für das gesamte System.
-Der komplette Docker-Compose-Stack liegt unter `/opt/monitoring`. Die Daten von Prometheus, Grafana, Loki und dem Alertmanager liegen in Docker-Volumes unter `/var/lib/docker/volumes/`.
+Der komplette Docker-Compose-Stack liegt unter `/opt/monitoring`. Die Daten von Prometheus, Grafana, Loki und dem Alertmanager sowie der Nachrichten-Cache von ntfy liegen in Docker-Volumes unter `/var/lib/docker/volumes/`. Benutzer und Rechte von ntfy liegen dagegen unter `/opt/monitoring/ntfy/data/` und damit in der Host-Sicherung.
 
 ```bash
 /opt/monitoring/
@@ -53,7 +53,12 @@ Der komplette Docker-Compose-Stack liegt unter `/opt/monitoring`. Die Daten von 
 ├── prometheus/
 │   ├── prometheus.yml
 │   └── alert-rules.yml
-├── alertmanager/alertmanager.yml
+├── alertmanager/
+│   ├── alertmanager.yml
+│   └── ntfy-token                  # Token für ntfy, nicht im Repo (Vorlage ntfy-token.example)
+├── ntfy/
+│   ├── server.yml
+│   └── data/user.db                # Benutzer, Rechte und Tokens von ntfy, nicht im Repo
 ├── grafana/provisioning/           # Datenquellen Prometheus und Alertmanager
 ├── loki/loki-config.yml
 ├── alloy/config.alloy
@@ -74,7 +79,7 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
     - [`ufw-docker`](https://github.com/chaifeng/ufw-docker) installiert, siehe unten
 - Sicherheitsupdates automatisch, siehe unten
 
-**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted und Loki von `pve01` erreichbar sein müssen.
+**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted und Loki von `pve01` und ntfy von `proxy01` erreichbar sein müssen.
 
 Die Vorlage von `ufw-docker` gibt alle privaten Netze pauschal frei (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Damit wirken die Regeln nur gegen Zugriffe aus dem Internet, nicht aus dem Heimnetz. In `/etc/ufw/after.rules` bleibt deshalb nur `172.16.0.0/12` freigegeben, das sind die Docker-Netze selbst. Ohne diese Zeile kämen Prometheus und PVE-Exporter nicht mehr an `pve01` heran.
 
@@ -85,14 +90,13 @@ Konfiguration: [`configs/mon01/ufw/`](../configs/mon01/ufw/)
 | Direction | Action | Protocol | Port | Source | Zweck |
 |---|---|---|---|---|---|
 | in | ALLOW | tcp | 22 | 10.0.10.0/24 | SSH aus Trusted (im Gateway zusätzlich nur von der Workstation) |
-| in | ALLOW | tcp | 3000 | 10.0.10.0/24 | Grafana aus Trusted |
-| fwd | ALLOW | tcp | 3000 | 10.0.10.0/24 | Grafana, Docker-Port (`ufw route allow`) |
-| in | ALLOW | tcp | 3100 | 10.0.99.10 | Logs von `pve01` an Loki |
-| fwd | ALLOW | tcp | 3100 | 10.0.99.10 | Loki, Docker-Port (`ufw route allow`) |
+| fwd | ALLOW | tcp | 3000 | 10.0.10.0/24 | Grafana aus Trusted |
+| fwd | ALLOW | tcp | 3100 | 10.0.99.10 | Logs von `pve01` an Loki |
+| fwd | ALLOW | tcp | 2586 | 10.0.40.10 | ntfy, nur für `proxy01` |
 
 Im Gateway kommen dazu die Regeln "Trusted zu mon01" (3000), "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
 
-> Grafana (3000) und Loki (3100) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
+> Grafana (3000) und Loki (3100) und ntfy (2586) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
 
 **Automatische Updates:** `unattended-upgrades` spielt jeden Morgen um 05:00 die Sicherheitsupdates von Debian ein (nur aus `trixie-security`). Das liegt nach der Host-Sicherung um 02:30, der Stand direkt vor dem Update ist also immer gesichert. Danach startet `needrestart` die Dienste neu, die noch die alten Bibliotheken geladen haben. Kommt ein neuer Kernel, startet `mon01` direkt nach dem Update selbst neu, die Container des Stacks kommen danach von allein wieder hoch. Docker stammt aus dem Docker-Repo und bleibt, genau wie die Images des Stacks, außen vor. Beides und alle übrigen Updates kommen von Hand am monatlichen Patchday, siehe [Updates & Patchmanagement](Updates%20&%20Patchmanagement.md).
 
@@ -101,12 +105,13 @@ Konfiguration: [`configs/mon01/auto-updates/`](../configs/mon01/auto-updates/)
 
 ## 📊 Monitoring - Docker-Compose-Stack
 
-Sieben Container unter `/opt/monitoring` (siehe Storage-Layout). Jedes Image läuft mit einer festen Version, die in der Compose-Datei steht. So holt `docker compose pull` nie ungeplant eine neue Version. Außerdem ist jederzeit nachvollziehbar, was läuft. Neue Versionen werden nur von Hand eingetragen.
+Acht Container unter `/opt/monitoring` (siehe Storage-Layout). Jedes Image läuft mit einer festen Version, die in der Compose-Datei steht. So holt `docker compose pull` nie ungeplant eine neue Version. Außerdem ist jederzeit nachvollziehbar, was läuft. Neue Versionen werden nur von Hand eingetragen.
 
 | Container | Image | Port | Zweck |
 |---|---|---|---|
 | `prometheus` | `prom/prometheus` | 9090 (intern) | Metriken sammeln und speichern, Aufbewahrung 30 Tage |
 | `alertmanager` | `prom/alertmanager` | 9093 (intern) | Alerts bündeln und weiterleiten |
+| `ntfy` | `binwiederhier/ntfy` | 2586 | Push-Benachrichtigungen, siehe unten |
 | `node-exporter` | `prom/node-exporter` | 9100 (intern) | OS-Metriken von `mon01` |
 | `grafana` | `grafana/grafana` | 3000 | Dashboards |
 | `loki` | `grafana/loki` | 3100 | Logs speichern, Aufbewahrung 7 Tage |
@@ -140,7 +145,7 @@ Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitor
 | `Pve01GpuHigh` | GPU von `pve01` über 85 % für 5 min | warning |
 | `Pve01StoragePoolFull` | ein Storage-Pool von `pve01` über 85 % für 10 min | warning |
 
-> Der Alertmanager hat keinen Benachrichtigungskanal. Ausgelöste Alerts sind nur in Grafana und im Alertmanager selbst sichtbar.
+> Ausgelöste Alerts schickt der Alertmanager an ntfy, siehe Benachrichtigungen.
 
 **Dashboards in Grafana:**
 
@@ -150,6 +155,23 @@ Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitor
 Die Dashboards liegen nur in der Datenbank von Grafana, nicht als Datei auf `mon01`. Die Fassungen im Repo sind Exporte. In Grafana kommen Prometheus und Alertmanager als Datenquellen per Provisioning-Datei, die Loki-Datenquelle ist von Hand angelegt.
 
 Exporte: [`configs/mon01/monitoring/grafana/dashboards/`](../configs/mon01/monitoring/grafana/dashboards/)
+
+
+## 📣 Benachrichtigungen (ntfy)
+
+Ausgelöste Alerts kommen als Push-Nachricht aufs Handy. Dafür läuft [ntfy](https://ntfy.sh/) als eigener Container im Stack. Der Alertmanager liefert seine Alerts im internen Docker-Netz direkt an ntfy, ohne Umweg über den Reverse Proxy. Das Senden hängt damit nicht an `pve01`. Das Handy holt die Nachrichten über `https://ntfy.home.<domain>` ab, also über `proxy01` mit dessen Let's-Encrypt-Zertifikat. Von unterwegs geht das über das WireGuard-VPN.
+
+ntfy läuft auf `mon01` neben dem Alertmanager und nicht auf `pve01`. Bei einem Ausfall des Hosts wäre ntfy dort mit betroffen und der Alertmanager könnte genau diesen Ausfall nicht mehr melden. Fällt `mon01` selbst aus, schweigen Alertmanager und ntfy gemeinsam, siehe Offene Punkte.
+
+**Zustellung aufs iPhone:** Für die sofortige Zustellung schickt ntfy zu jeder Nachricht einen Weckruf an den öffentlichen Server `ntfy.sh` (`upstream-base-url`), so wie es die [ntfy-Doku](https://docs.ntfy.sh/config/#ios-instant-notifications) für eigene Server vorsieht. Der Weckruf enthält nur die ID der Nachricht und eine Prüfsumme (SHA-256) der Themen-Adresse, keinen Inhalt. Die App holt den Inhalt danach selbst über `proxy01` ab. Ist `proxy01` nicht erreichbar, etwa ohne VPN oder bei einem Ausfall von `pve01`, erscheint nur "New message" ohne Inhalt.
+
+**Themen:** Alle Themen beginnen mit `homelab-`. Die Alerts aus dem Alertmanager laufen in `homelab-alerts`. Sicherungen und Updates haben eigene Themen (`homelab-backups`, `homelab-updates`). Formatiert werden die Alerts mit der eingebauten Vorlage von ntfy für den Alertmanager (`?template=alertmanager`), ein Zusatzdienst ist nicht nötig.
+
+**Anmeldung und Rechte:** Ohne Anmeldung darf niemand lesen oder schreiben (`auth-default-access: deny-all`). Jeder Absender hat einen eigenen Benutzer mit Token und darf nur schreiben. Der Benutzer für das Handy darf nur lesen und hat keine Admin-Rechte. Benutzer und Rechte werden per Kommandozeile auf `mon01` verwaltet. Das Token des Alertmanagers liegt in einer eigenen Datei und nicht in dessen Konfiguration.
+
+**Erreichbarkeit:** Port 2586 ist nur für `proxy01` freigegeben, siehe Hardening. Eine Regel im Gateway braucht es nicht, da `proxy01` und `mon01` im selben VLAN liegen.
+
+Konfiguration: [`configs/mon01/monitoring/ntfy/server.yml`](../configs/mon01/monitoring/ntfy/server.yml), [`configs/mon01/monitoring/alertmanager/alertmanager.yml`](../configs/mon01/monitoring/alertmanager/alertmanager.yml)
 
 
 ## 📜 Logging (Loki & Alloy)
@@ -184,7 +206,7 @@ Konfiguration: [`configs/mon01/monitoring/alloy/config.alloy`](../configs/mon01/
 - **Zeitplan:** Skript mit systemd-Timer, jeden Tag 02:30 Uhr. War `mon01` zu der Zeit aus, wird die Sicherung beim nächsten Start nachgeholt
 - **Gesichert werden:**
     - `/etc` komplett (inkl. `/etc/ufw` mit den Regeln für `ufw-docker`)
-    - `/opt/monitoring` mit allen Konfigurationen des Stacks
+    - `/opt/monitoring` mit allen Konfigurationen des Stacks, darunter Benutzer, Rechte und Tokens von ntfy
     - eigene Skripte, darunter das Sicherungsskript selbst
     - die SSH-Schlüssel von `root` und Admin-User
     - die Daten von Grafana (Docker-Volume) mit Dashboards, Benutzern und der Loki-Datenquelle
@@ -192,6 +214,7 @@ Konfiguration: [`configs/mon01/monitoring/alloy/config.alloy`](../configs/mon01/
 - **Nicht gesichert:**
     - Grafana-Plugins, nur ihre Liste. Grafana lädt sie selbst nach. Mit Plugins wäre das Archiv rund 168 MB groß, ohne sind es rund 570 KB
     - Messwerte von Prometheus und Logs aus Loki
+    - der Nachrichten-Cache von ntfy, er hält Nachrichten ohnehin nur 12 Stunden
 
 Dateien: [`configs/mon01/host-backup/`](../configs/mon01/host-backup/)
 
@@ -200,7 +223,6 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 
 ## 📝 Offene Punkte
 
-- Benachrichtigungskanal für den Alertmanager, dazu Test-Alerts
 - Alert, wenn eine Sicherung fehlschlägt oder zu alt ist
 - Selbstüberwachung von `mon01` ausbauen (CPU, RAM, Zustand der Container) und eine Meldung von außen, wenn `mon01` ganz ausfällt
 - `proxy01` und `cal01` mit Dienst-Prüfung überwachen (Blackbox-Exporter)

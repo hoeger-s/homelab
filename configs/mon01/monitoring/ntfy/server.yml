@@ -1,0 +1,9 @@
+# /opt/monitoring/ntfy/server.yml auf mon01
+
+base-url: "https://ntfy.home.<domain>"
+listen-http: ":2586"
+behind-proxy: true
+upstream-base-url: "https://ntfy.sh"
+cache-file: "/var/cache/ntfy/cache.db"
+auth-file: "/var/lib/ntfy/user.db"
+auth-default-access: "deny-all"

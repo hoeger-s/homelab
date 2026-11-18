@@ -1,7 +1,13 @@
 # /opt/monitoring/alertmanager/alertmanager.yml auf mon01
-# Noch ohne Benachrichtigungskanal (siehe Roadmap).
+
 route:
-  receiver: 'default'
+  receiver: 'ntfy-alerts'
 
 receivers:
-  - name: 'default'
+  - name: 'ntfy-alerts'
+    webhook_configs:
+      - url: 'http://ntfy:2586/homelab-alerts?template=alertmanager'
+        http_config:
+          authorization:
+            type: Bearer
+            credentials_file: /etc/alertmanager/ntfy-token

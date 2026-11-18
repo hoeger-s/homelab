@@ -1,6 +1,6 @@
 # proxy01 - Reverse Proxy
 
-Stand: 17.11.2026
+Stand: 18.11.2026
 
 Zentraler Reverse Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<domain>` entgegen und leitet sie an den jeweiligen Dienst weiter. Endgeräte bauen eine verschlüsselte Verbindung über TLS (Transport Layer Security) nur bis zu `proxy01` auf. Caddy weist sich dabei mit einem Wildcard-Zertifikat von Let's Encrypt aus, dem alle Geräte von sich aus vertrauen. Kein Dienst ist aus dem Internet erreichbar, Zugriff von unterwegs nur über das WireGuard-VPN.
 
@@ -45,7 +45,7 @@ DNS-Server und Suchdomäne stehen ebenfalls fest in der Container-Konfiguration.
 - Proxmox-Firewall statt `ufw`, Default-Policy `DROP` in beide Richtungen
 - Sicherheitsupdates automatisch, siehe unten
 
-Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht oder verlässt. Wer im Container `root` ist, kann die Regeln deshalb weder sehen noch lockern. Mit `ufw` lägen sie im Container selbst. Auch ausgehend ist nur erlaubt, was der Proxy für seine Aufgaben braucht: DNS, Zeit, Web für Updates, Zertifikate und Weiterleitungen sowie Radicale auf `cal01`. Ein übernommener Proxy kann sich so kaum weiter im Homelab ausbreiten.
+Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht oder verlässt. Wer im Container `root` ist, kann die Regeln deshalb weder sehen noch lockern. Mit `ufw` lägen sie im Container selbst. Auch ausgehend ist nur erlaubt, was der Proxy für seine Aufgaben braucht: DNS, Zeit, Web für Updates, Zertifikate und Weiterleitungen sowie Radicale auf `cal01` und ntfy auf `mon01`. Ein übernommener Proxy kann sich so kaum weiter im Homelab ausbreiten.
 
 **Regeln (`120.fw`):**
 
@@ -60,6 +60,7 @@ Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht
 | out | ACCEPT | udp | 123 | any | Zeit (NTP) |
 | out | ACCEPT | tcp | 80, 443 | any | Updates, Let's Encrypt, deSEC-API, Weiterleitung an `ki01` |
 | out | ACCEPT | tcp | 5232 | `cal01` | Radicale (Weiterleitung) |
+| out | ACCEPT | tcp | 2586 | `mon01` | ntfy (Weiterleitung) |
 
 Quellen und Ziele sind Aliase aus `cluster.fw` (siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-in-proxmox)).
 
@@ -109,6 +110,7 @@ Konfiguration: [`configs/proxy01/caddy/`](../configs/proxy01/caddy/)
 | Name | Ziel | Dienst |
 |---|---|---|
 | `cal.home.<domain>` | `10.0.40.30:5232` (HTTP) | Radicale auf [cal01](cal01%20-%20Kalender%20Server.md) |
+| `ntfy.home.<domain>` | `mon01.internal:2586` (HTTP) | Push-Benachrichtigungen auf [mon01](mon01%20-%20Monitoring%20Host.md#-benachrichtigungen-ntfy) |
 
 Dazu die Weboberfläche des KI-Assistenten (eigenes Projekt, nicht in diesem Repo). Unbekannte Namen weist Caddy per `abort` sofort ab.
 

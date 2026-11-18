@@ -6,3 +6,5 @@ manuals/
 !*.env.example
 pve.yml
 configs/cal01/radicale/users
+configs/mon01/monitoring/alertmanager/ntfy-token
+configs/mon01/monitoring/ntfy/data/

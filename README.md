@@ -1,6 +1,6 @@
 # 🛡️ Stefans Homelab
 
-Stand: 17.11.2026
+Stand: 18.11.2026
 
 Dieses Repository dokumentiert den schrittweisen Aufbau meines privaten Homelabs. Die Konfigurationsdateien der Server liegen versioniert mit im Repo.
 
@@ -101,7 +101,7 @@ Details: [cal01 - Kalender Server](docs/cal01%20-%20Kalender%20Server.md)
 
 # 📈 Monitoring & Logging
 
-Prometheus sammelt die Metriken von `pve01` samt Containern und von `mon01`, Grafana stellt sie dar. Alert-Regeln schlagen an, wenn CPU, RAM, GPU oder Storage knapp werden. Die Logs beider Hosts laufen zentral in Loki zusammen und lassen sich nach Host, Dienst und Schweregrad filtern.
+Prometheus sammelt die Metriken von `pve01` samt Containern und von `mon01`, Grafana stellt sie dar. Alert-Regeln schlagen an, wenn CPU, RAM, GPU oder Storage knapp werden. Ausgelöste Alerts kommen über ntfy als Push-Nachricht aufs Handy. Ihre Inhalte bleiben dabei im Homelab. Die Logs beider Hosts laufen zentral in Loki zusammen und lassen sich nach Host, Dienst und Schweregrad filtern.
 
 ![Grafana-Dashboard](assets/screenshots/Grafana-Dashboard_v3.png)
 <sub>*Grafana-Dashboard "Homelab Overview"*</sub>
@@ -137,6 +137,7 @@ Details: [Backup & Wiederherstellung](docs/Backup%20&%20Wiederherstellung.md)
 | <img src="assets/logos/Docker.png" width="24"> | [Docker](https://www.docker.com) | Container für den Monitoring-Stack |
 | <img src="assets/logos/Prometheus.png" width="24"> | [Prometheus](https://prometheus.io/) | Metriken sammeln und Alert-Regeln auswerten |
 | <img src="assets/logos/Alertmanager.png" width="24"> | [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) | Alerts bündeln und weiterleiten |
+| <img src="assets/logos/ntfy.png" width="24"> | [ntfy](https://ntfy.sh/) | Push-Benachrichtigungen für Alerts aufs Handy |
 | <img src="assets/logos/Grafana.png" width="24"> | [Grafana](https://grafana.com/) | Dashboards für Metriken und Logs |
 | <img src="assets/logos/Loki.png" width="24"> | [Loki](https://grafana.com/oss/loki/) | Zentrale Log-Speicherung |
 | <img src="assets/logos/Alloy.png" width="24"> | [Alloy](https://grafana.com/docs/alloy/) | Liest die Logs auf den Hosts und schickt sie an Loki |
@@ -167,7 +168,6 @@ Zugangsdaten, Tokens und Passwörter sind nie im Repo. Wo eine Datei welche brau
 Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. Neue Anwendungen kommen erst, wenn das Bestehende überwacht wird und die Doku stimmt. Oben steht, was sich mit dem Vorhandenen umsetzen lässt, darunter, was neue Dienste oder neue Hardware braucht.
 
 **Mit dem, was läuft**
-- [ ] Benachrichtigungskanal für den Alertmanager, dazu Test-Alerts
 - [ ] Alert, wenn eine Sicherung fehlschlägt oder älter als ein Tag ist
 - [ ] Abgebrochene Übertragung der Sicherung von `mon01` erkennbar machen
 - [ ] Selbstüberwachung von `mon01` ausbauen (CPU, RAM)
@@ -191,6 +191,7 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 - [ ] Authelia als zentrale Anmeldung mit MFA
 - [ ] Interne CA für die Strecke Proxy -> Dienst, die Weboberfläche von `pve01` und den PVE-Exporter
 - [ ] Homepage als Startseite für alle Dienste
+- [x] Benachrichtigungskanal für den Alertmanager (ntfy), dazu Test-Alerts
 
 **Mit neuer Hardware**
 - [ ] UniFi Switch, dabei die Port-Profile neu ordnen und das native VLAN an den Ports dicht machen

@@ -17,6 +17,12 @@
 		reverse_proxy 10.0.40.30:5232
 	}
 
+	# Benachrichtigungen (ntfy auf mon01)
+	@ntfy host ntfy.home.<domain>
+	handle @ntfy {
+		reverse_proxy mon01.internal:2586
+	}
+
 	# Die Weiterleitung zum KI-Assistenten (ki01) ist ein eigenes Projekt und nicht Teil dieses Repos
 
 	# Unbekannte Namen sofort abweisen
