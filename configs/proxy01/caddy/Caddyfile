@@ -14,7 +14,7 @@
 	# Kalender, Aufgaben und Kontakte (Radicale auf cal01)
 	@cal host cal.home.<domain>
 	handle @cal {
-		reverse_proxy 10.0.40.30:5232
+		reverse_proxy cal01.internal:5232
 	}
 
 	# Benachrichtigungen (ntfy auf mon01)
@@ -22,6 +22,12 @@
 	handle @ntfy {
 		reverse_proxy mon01.internal:2586
 	}
+
+	# Dashboards (Grafana auf mon01)
+	@grafana host grafana.home.<domain>
+    handle @grafana {
+        reverse_proxy mon01.internal:3000
+    }
 
 	# Die Weiterleitung zum KI-Assistenten (ki01) ist ein eigenes Projekt und nicht Teil dieses Repos
 

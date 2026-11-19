@@ -1,6 +1,6 @@
 # Host, VM- und Container-Übersicht
 
-Stand: 06.11.2026
+Stand: 19.11.2026
 
 Alle Rechner, Container und Netzwerkgeräte des Homelabs auf einen Blick. Details stehen in der Doku des jeweiligen Hosts, Netze und Firewall-Regeln unter [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
 
@@ -10,7 +10,7 @@ Alle Rechner, Container und Netzwerkgeräte des Homelabs auf einen Blick. Detail
 | Name | Rolle | OS | CPU | RAM | Storage | FQDN | IP-Adresse | Netz | Notizen |
 |---|---|---|---|---|---|---|---|---|---|
 | `pve01` | Proxmox-Hypervisor | Proxmox VE 9 | 8c/8t | 32 GB | 256 GB NVMe, 2 TB SSD, 2 TB HDD | `pve01.internal` | `10.0.99.10` | Management (`10.0.99.0/24`) | trägt alle Container, siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md) |
-| `mon01` | Monitoring | Debian 13 (trixie) | 2c/4t | 16 GB | 240 GB M.2 SATA | `mon01.internal` | `10.0.40.90` | Homelab (`10.0.40.0/24`) | Intel NUC, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md) |
+| `mon01` | Monitoring | Debian 13 (trixie) | 2c/4t | 16 GB | 240 GB M.2 SATA | `mon01.internal` | `10.0.40.90` | Homelab (`10.0.40.0/24`) | Intel NUC, Grafana erreichbar über `grafana.home.<domain>`, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md) |
 
 
 # Container

@@ -1,6 +1,6 @@
 # Netzwerk & Sicherheit
 
-Stand: 06.11.2026
+Stand: 19.11.2026
 
 Wie das Heimnetz aufgeteilt ist, wer wohin darf und warum.
 
@@ -96,8 +96,10 @@ Es gibt also drei Namensräume:
 | Namensraum | Beispiel | Wofür |
 |---|---|---|
 | eigene Domain | `cal.home.<domain>` | Dienste hinter dem Proxy, nur damit gibt es echte Zertifikate |
-| `.internal` | `pve01.internal` | Rechnernamen im Heimnetz |
-| Adressen | `10.0.99.10` | Wege zwischen den Servern (z. B. Prometheus -> pve01) |
+| `.internal` | `pve01.internal` | Rechnernamen im Heimnetz, auch für die Wege zwischen den Servern (z. B. Prometheus -> pve01) |
+| Adressen | `10.0.99.10` | nur in Firewall-Regeln, die nach Adressen filtern (Netzwerklisten im Gateway, Aliase in Proxmox, `ufw`) |
+
+Ändert sich die Adresse eines Servers, bleiben Reverse Proxy, Prometheus, Alloy und Host-Sicherung unberührt. Nachzuziehen sind der DNS-Eintrag und die Netzwerkliste im Gateway sowie der Alias in Proxmox. Nur `ufw` auf `mon01` kennt keine Aliase, dort stehen die Adressen von `proxy01` und `pve01` direkt in den Regeln.
 
 
 ## 🧱 Firewall im Gateway (Zonen)
@@ -111,14 +113,14 @@ Adressen stehen in den Regeln nie direkt, sondern über Netzwerklisten (`proxy01
 | Regel | Von | Nach | Port | Zweck |
 |---|---|---|---|---|
 | Trusted zu proxy01 | Trusted | `proxy01` | 80, 443 | alle Dienste über `*.home.<domain>` (80 nur Umleitung) |
-| Trusted zu mon01 | Trusted | `mon01` | 3000 | Grafana |
-| Trusted zu cal01 | Trusted | `cal01` | 5232 | Rückfallweg am Proxy vorbei |
 | Trusted zu ki01 | Trusted | `ki01` | 443 | Weboberfläche des KI-Assistenten direkt |
 | Admin zu Homelab | `admin-geraete` | Homelab | 22 | SSH auf Server und Container |
 | Admin zu pve01 | `admin-geraete` | `pve01` | 22, 8006 | SSH und Weboberfläche Proxmox |
 | VPN zu proxy01 | WireGuard | `proxy01` | 443 | unterwegs nur der Proxy |
 | mon01 zu pve01 | `mon01` | `pve01` | 22, 8006, 9100, 9835 | Exporter, Proxmox-API, Host-Sicherung |
 | pve01 zu mon01 | `pve01` | `mon01` | 3100 | Logs an Loki |
+
+Weboberflächen von Diensten sind nur über den Reverse Proxy erreichbar, mit echtem Zertifikat und auch von unterwegs über das VPN. Direkt erreichbar bleiben nur die Zugänge zur Verwaltung, also SSH und die Weboberfläche von Proxmox. Fällt `proxy01` aus, lässt er sich so weiterhin reparieren. Jeder Dienst bleibt dann per SSH-Tunnel auf seinen Server erreichbar. Die Weboberfläche des KI-Assistenten ist ein eigenes Projekt und folgt diesem Grundsatz noch nicht.
 
 Server und Container werden nur von der Workstation aus verwaltet (Least-Privilege-Prinzip). Andere Endgeräte verwalten im Homelab nichts. Die Workstation hat ihre Adresse fest per DHCP-Reservierung und hängt per Ethernet am Gateway. Über WLAN bekäme sie eine andere Adresse und hätte keinen Admin-Zugriff mehr. Eine Regel nach Adresse prüft nur, woher eine Verbindung kommt, nicht wer dahintersitzt. Wer schon im Trusted-Netz ist, könnte seinem Gerät die Adresse der Workstation von Hand geben. Die Regeln halten also alle anderen Geräte von den Anmeldungen fern. Geschützt sind die Zugänge selbst durch die Anmeldung. SSH geht nur mit Schlüssel und die Weboberflächen von Proxmox und UniFi verlangen zusätzlich einen zweiten Faktor (MFA).
 
@@ -195,6 +197,4 @@ Der Access Point wird über das Management-VLAN verwaltet. Die WLANs und das Man
 - Natives VLAN an den Ports dicht machen, damit kein Gerät ohne Tag im Default-Netz landet. Kommt mit dem Switch.
 - VPN-Netz aus `192.168.2.0/24` herausnehmen.
 - IDS/IPS am Gateway, erst im Meldemodus.
-- Radicale-Rückfallweg (Trusted zu cal01) schließen.
-- Server untereinander über ihre `.internal`-Namen statt über Adressen ansprechen (Prometheus, Host-Sicherung, Logs).
 - Ausgehende Regeln der Container enger fassen: HTTP und HTTPS sind an jedes Ziel erlaubt, auch ins Homelab selbst.

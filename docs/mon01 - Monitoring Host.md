@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 18.11.2026
+Stand: 19.11.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, ntfy, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
@@ -34,11 +34,11 @@ Das Monitoring läuft bewusst auf eigener Hardware und nicht als Container auf `
 | DNS | 10.0.40.1, ohne Suchdomäne |
 | VLAN | Homelab (VLAN 40) |
 | Switchport | Port 3, Profil Homelab-Access |
-| Weboberfläche | Grafana `http://10.0.40.90:3000` bzw. `http://mon01.internal:3000`, ntfy `https://ntfy.home.<domain>` über `proxy01` |
+| Weboberfläche | Grafana `https://grafana.home.<domain>`, ntfy `https://ntfy.home.<domain>`, beide über `proxy01` |
 
 Die IP-Adresse ist fest auf dem Host eingetragen und wird nicht per DHCP vom UniFi-Gateway vergeben. So startet `mon01` auch dann mit seiner Adresse, wenn das Gateway gerade nicht antwortet. Eine zusätzliche Reservierung im Gateway gibt es bewusst nicht, damit die Adresse nur an einer Stelle gepflegt wird. Unter `mon01.internal` ist der Host per DNS-Eintrag im Gateway erreichbar.
 
-`mon01` selbst spricht alle Ziele über ihre Adressen an und nicht über deren DNS-Namen. Eine Suchdomäne ist deshalb nicht gesetzt.
+`mon01` spricht seine Ziele über die vollen `.internal`-Namen an, etwa `pve01.internal`. Eine Suchdomäne braucht es dafür nicht und ist nicht gesetzt. Die Container im Stack lösen die Namen ebenfalls über das Gateway auf, Docker reicht die Anfragen weiter.
 
 
 ## 💾 Storage-Layout
@@ -79,7 +79,7 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
     - [`ufw-docker`](https://github.com/chaifeng/ufw-docker) installiert, siehe unten
 - Sicherheitsupdates automatisch, siehe unten
 
-**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana aus Trusted, Loki von `pve01` und ntfy von `proxy01` erreichbar sein müssen.
+**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana und ntfy von proxy01 und Loki von pve01 erreichbar sein müssen.
 
 Die Vorlage von `ufw-docker` gibt alle privaten Netze pauschal frei (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Damit wirken die Regeln nur gegen Zugriffe aus dem Internet, nicht aus dem Heimnetz. In `/etc/ufw/after.rules` bleibt deshalb nur `172.16.0.0/12` freigegeben, das sind die Docker-Netze selbst. Ohne diese Zeile kämen Prometheus und PVE-Exporter nicht mehr an `pve01` heran.
 
@@ -90,11 +90,11 @@ Konfiguration: [`configs/mon01/ufw/`](../configs/mon01/ufw/)
 | Direction | Action | Protocol | Port | Source | Zweck |
 |---|---|---|---|---|---|
 | in | ALLOW | tcp | 22 | 10.0.10.0/24 | SSH aus Trusted (im Gateway zusätzlich nur von der Workstation) |
-| fwd | ALLOW | tcp | 3000 | 10.0.10.0/24 | Grafana aus Trusted |
-| fwd | ALLOW | tcp | 3100 | 10.0.99.10 | Logs von `pve01` an Loki |
 | fwd | ALLOW | tcp | 2586 | 10.0.40.10 | ntfy, nur für `proxy01` |
+| fwd | ALLOW | tcp | 3000 | 10.0.40.10 | Grafana, nur für `proxy01` |
+| fwd | ALLOW | tcp | 3100 | 10.0.99.10 | Logs von `pve01` an Loki |
 
-Im Gateway kommen dazu die Regeln "Trusted zu mon01" (3000), "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
+Im Gateway kommen dazu die Regeln "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
 
 > Grafana (3000), Loki (3100) und ntfy (2586) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
 
@@ -126,11 +126,11 @@ Compose-Datei: [`configs/mon01/monitoring/docker-compose.yml`](../configs/mon01/
 |---|---|---|---|
 | `prometheus` | `localhost:9090` | `mon01` | Selbstüberwachung |
 | `node_exporter_mon01` | `node-exporter:9100` | `mon01` | OS-Metriken `mon01` |
-| `node_exporter_pve01` | `10.0.99.10:9100` | `pve01` | OS-Metriken `pve01` |
-| `pve_exporter` | `10.0.99.10` | `pve01` | Proxmox-API über `pve-exporter:9221` (Container, Storage-Pools) |
-| `nvidia_gpu_pve01` | `10.0.99.10:9835` | `pve01` | GPU-Metriken `pve01` |
+| `node_exporter_pve01` | `pve01.internal:9100` | `pve01` | OS-Metriken `pve01` |
+| `pve_exporter` | `pve01.internal` | `pve01` | Proxmox-API über `pve-exporter:9221` (Container, Storage-Pools) |
+| `nvidia_gpu_pve01` | `pve01.internal:9835` | `pve01` | GPU-Metriken `pve01` |
 
-Jedes Ziel trägt den Hostnamen als `instance` statt der üblichen Kombination aus Adresse und Port. Alert-Regeln und Dashboards beziehen sich nur auf diesen Namen. Ändert sich eine Adresse, wird nur die Zeile `targets` angepasst, die Verläufe laufen unter demselben Namen weiter.
+Jedes Ziel trägt den Hostnamen als `instance` statt der üblichen Kombination aus Adresse und Port. Alert-Regeln und Dashboards beziehen sich nur auf diesen Namen. Die Ziele selbst stehen als `.internal`-Namen in der Konfiguration. Ändert sich eine Adresse, ändert sich nur der DNS-Eintrag im Gateway und die Verläufe laufen unter demselben Namen weiter.
 
 Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitoring/prometheus/)
 
@@ -155,6 +155,8 @@ Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitor
 Die Dashboards liegen nur in der Datenbank von Grafana, nicht als Datei auf `mon01`. Die Fassungen im Repo sind Exporte. In Grafana kommen Prometheus und Alertmanager als Datenquellen per Provisioning-Datei, die Loki-Datenquelle ist von Hand angelegt.
 
 Exporte: [`configs/mon01/monitoring/grafana/dashboards/`](../configs/mon01/monitoring/grafana/dashboards/)
+
+**Erreichbarkeit:** Grafana ist über `https://grafana.home.<domain>` erreichbar, also über `proxy01` mit dessen Let's-Encrypt-Zertifikat, von unterwegs über das WireGuard-VPN. Port 3000 ist nur für `proxy01` freigegeben, siehe Hardening. Grafana kennt seine Adresse über `GF_SERVER_ROOT_URL`, damit Links und Weiterleitungen stimmen. Ist `proxy01` nicht erreichbar, bleibt Grafana per SSH-Tunnel auf `mon01` erreichbar.
 
 
 ## 📣 Benachrichtigungen (ntfy)
@@ -226,7 +228,5 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 - Alert, wenn eine Sicherung fehlschlägt oder zu alt ist
 - Selbstüberwachung von `mon01` ausbauen (CPU, RAM, Zustand der Container) und eine Meldung von außen, wenn `mon01` ganz ausfällt
 - `proxy01` und `cal01` mit Dienst-Prüfung überwachen (Blackbox-Exporter)
-- Grafana hinter den Reverse Proxy
 - `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA gibt
 - Loki meldet dauerhaft "Ingester not ready", obwohl Logs ankommen. Ursache klären
-- Ziele über DNS-Namen statt Adressen ansprechen (Prometheus, Backup-Skript, Alloy auf `pve01`)

@@ -1,6 +1,6 @@
 # cal01 - Kalender Server
 
-Stand: 17.11.2026
+Stand: 19.11.2026
 
 Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV). iOS-Geräte und Thunderbird greifen über den Reverse Proxy darauf zu.
 
@@ -54,7 +54,6 @@ Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht
 |---|---|---|---|---|---|
 | in | ACCEPT | tcp | 22 | `admin` | SSH nur von der Workstation |
 | in | ACCEPT | tcp | 5232 | `proxy01` | Zugriff über den Reverse Proxy |
-| in | ACCEPT | tcp | 5232 | `trusted` | Rückfallweg direkt aus Trusted |
 | out | ACCEPT | udp/tcp | 53 | any | DNS |
 | out | ACCEPT | udp | 123 | any | Zeit (NTP) |
 | out | ACCEPT | tcp | 80, 443 | any | Updates |
@@ -63,7 +62,7 @@ Quellen sind Aliase aus `cluster.fw` (siehe [Netzwerk & Sicherheit](Netzwerk%20&
 
 Regeldatei: [`configs/pve01/firewall/121.fw`](../configs/pve01/firewall/121.fw)
 
-Im Gateway kommt dazu die Regel "Trusted zu cal01" (5232) für den Rückfallweg, siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-im-gateway-zonen). Der normale Weg geht über `proxy01`. Über den Rückfallweg am Proxy vorbei bleiben Kalender, Aufgaben und Kontakte aus dem Heimnetz auch bei einem Ausfall von `proxy01` erreichbar.
+Eine Regel im Gateway braucht es nicht, da `proxy01` und `cal01` im selben VLAN liegen. Radicale ist damit nur über `proxy01` erreichbar. Fällt `proxy01` aus, bleibt der Weg über einen SSH-Tunnel auf `cal01` (siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-im-gateway-zonen)).
 
 > Die Regeln liegen auf `pve01` unter `/etc/pve/firewall/121.fw`.
 
@@ -79,7 +78,6 @@ Installiert aus den Debian-Paketquellen (`radicale` 3.5.3), dazu `python3-bcrypt
 | Option | Value |
 |---|---|
 | Adresse | `https://cal.home.<domain>` (über `proxy01`) |
-| Rückfallweg | `http://10.0.40.30:5232` (nur aus Trusted) |
 | Anmeldung | `htpasswd`, bcrypt |
 | Rechte | Regeldatei `/etc/radicale/rights`: jeder sieht seine eigenen Sammlungen, dazu gezielte Freigaben einzelner Kalender für weitere Benutzer |
 | Verlauf | jede Änderung als Git-Commit im Datenordner |
@@ -123,7 +121,6 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 
 ## 📝 Offene Punkte
 
-- Rückfallweg (Port 5232 aus Trusted) schließen
 - Strecke Proxy -> Radicale mit einer internen CA (Certificate Authority) verschlüsseln
 - Dienst-Prüfung von `cal01` mit Alert bei Ausfall (Blackbox-Exporter, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md))
 - Logs per Alloy an Loki auf `mon01` schicken
