@@ -38,7 +38,7 @@ Das Monitoring läuft bewusst auf eigener Hardware und nicht als Container auf `
 
 Die IP-Adresse ist fest auf dem Host eingetragen und wird nicht per DHCP vom UniFi-Gateway vergeben. So startet `mon01` auch dann mit seiner Adresse, wenn das Gateway gerade nicht antwortet. Eine zusätzliche Reservierung im Gateway gibt es bewusst nicht, damit die Adresse nur an einer Stelle gepflegt wird. Unter `mon01.internal` ist der Host per DNS-Eintrag im Gateway erreichbar.
 
-`mon01` spricht seine Ziele über die vollen `.internal`-Namen an, etwa `pve01.internal`. Eine Suchdomäne braucht es dafür nicht und ist nicht gesetzt. Die Container im Stack lösen die Namen ebenfalls über das Gateway auf, Docker reicht die Anfragen weiter.
+`mon01` spricht seine Ziele über die vollen `.internal`-Namen an, etwa `pve01.internal`. Eine Suchdomäne ist dafür nicht nötig und nicht gesetzt. Die Container im Stack lösen die Namen ebenfalls über das Gateway auf, Docker reicht die Anfragen weiter.
 
 
 ## 💾 Storage-Layout
@@ -79,7 +79,7 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
     - [`ufw-docker`](https://github.com/chaifeng/ufw-docker) installiert, siehe unten
 - Sicherheitsupdates automatisch, siehe unten
 
-**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana und ntfy von proxy01 und Loki von pve01 erreichbar sein müssen.
+**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana und ntfy von `proxy01` und Loki von `pve01` erreichbar sein müssen.
 
 Die Vorlage von `ufw-docker` gibt alle privaten Netze pauschal frei (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Damit wirken die Regeln nur gegen Zugriffe aus dem Internet, nicht aus dem Heimnetz. In `/etc/ufw/after.rules` bleibt deshalb nur `172.16.0.0/12` freigegeben, das sind die Docker-Netze selbst. Ohne diese Zeile kämen Prometheus und PVE-Exporter nicht mehr an `pve01` heran.
 
