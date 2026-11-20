@@ -103,8 +103,19 @@ services:
       start_period: 40s
 
 volumes:
+  # Die vier Daten-Volumes verwaltet Compose nicht selbst (external).
+  # Bei einem Neuaufbau vorher anlegen:
+  # docker volume create monitoring_prometheus-data (usw.)
   prometheus-data:
+    external: true
+    name: monitoring_prometheus-data
   grafana-data:
+    external: true
+    name: monitoring_grafana-data
   loki-data:
+    external: true
+    name: monitoring_loki-data
   alertmanager-data:
+    external: true
+    name: monitoring_alertmanager-data
   ntfy-cache:

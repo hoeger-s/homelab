@@ -1,6 +1,6 @@
 # 🛡️ Stefans Homelab
 
-Stand: 19.11.2026
+Stand: 20.11.2026
 
 Dieses Repository dokumentiert den schrittweisen Aufbau meines privaten Homelabs. Die Konfigurationsdateien der Server liegen versioniert mit im Repo.
 
@@ -170,13 +170,13 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 **Mit dem, was läuft**
 - [ ] Alert, wenn eine Sicherung fehlschlägt oder älter als ein Tag ist
 - [ ] Abgebrochene Übertragung der Sicherung von `mon01` erkennbar machen
-- [ ] Selbstüberwachung von `mon01` ausbauen (CPU, RAM)
 - [ ] Logs von `proxy01` und `cal01` per Alloy an Loki schicken
 - [ ] Meldung "Ingester not ready" in Loki klären
 - [ ] Eine Wiederherstellung komplett durchspielen und dokumentieren
 - [ ] Ausgehende Regeln der Container enger fassen
 - [ ] IDS/IPS am Gateway, erst im Meldemodus
 - [ ] VPN-Netz aus `192.168.2.0/24` herausnehmen
+- [x] Selbstüberwachung von `mon01` ausbauen (CPU, RAM)
 - [x] Grafana hinter den Reverse Proxy
 - [x] Radicale-Rückfallweg am Proxy vorbei schließen
 - [x] Server untereinander über ihre `.internal`-Namen ansprechen

@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 19.11.2026
+Stand: 20.11.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, ntfy, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
@@ -138,12 +138,16 @@ Konfiguration: [`configs/mon01/monitoring/prometheus/`](../configs/mon01/monitor
 
 | Alert | Bedingung | Severity |
 |---|---|---|
-| `MonitoringDiskSpaceLow` | `mon01`: weniger als 15 % frei auf `/` für 10 min | warning |
+| `Mon01DiskSpaceLow` | `mon01`: weniger als 15 % frei auf `/` für 10 min | warning |
+| `Mon01CpuHigh` | CPU von `mon01` über 85 % für 5 min | warning |
+| `Mon01RamHigh` | RAM von `mon01` über 85 % für 5 min | warning |
 | `NodeExporterPve01Down` | Node-Exporter von `pve01` seit 2 min nicht erreichbar | critical |
 | `Pve01CpuHigh` | CPU von `pve01` über 85 % für 5 min | warning |
 | `Pve01RamHigh` | RAM von `pve01` über 85 % für 5 min | warning |
 | `Pve01GpuHigh` | GPU von `pve01` über 85 % für 5 min | warning |
 | `Pve01StoragePoolFull` | ein Storage-Pool von `pve01` über 85 % für 10 min | warning |
+
+Die CPU-Regeln rechnen mit dem Mittelwert über 5 Minuten, RAM und GPU dagegen mit dem aktuellen. Jede Regel schlägt erst an, wenn die Schwelle die angegebene Zeit lang überschritten bleibt. Kurze Spitzen lösen so nichts aus. Bei der CPU vergehen von Beginn einer Volllast bis zur Push-Nachricht über ntfy dadurch gut 10 Minuten (in einem Test mit `mon01` am 20.11.2026 nachgemessen).
 
 > Ausgelöste Alerts schickt der Alertmanager an ntfy, siehe [Benachrichtigungen](#-benachrichtigungen-ntfy).
 
@@ -168,6 +172,20 @@ ntfy läuft auf `mon01` neben dem Alertmanager und nicht auf `pve01`. Bei einem 
 **Zustellung aufs iPhone:** Für die sofortige Zustellung schickt ntfy zu jeder Nachricht einen Weckruf an den öffentlichen Server `ntfy.sh` (`upstream-base-url`), so wie es die [ntfy-Doku](https://docs.ntfy.sh/config/#ios-instant-notifications) für eigene Server vorsieht. Der Weckruf enthält nur die ID der Nachricht und eine Prüfsumme (SHA-256) der Themen-Adresse, keinen Inhalt. Die App holt den Inhalt danach selbst über `proxy01` ab. Ist `proxy01` nicht erreichbar, etwa ohne VPN oder bei einem Ausfall von `pve01`, erscheint nur "New message" ohne Inhalt.
 
 **Themen:** Alle Themen beginnen mit `homelab-`. Die Alerts aus dem Alertmanager laufen in `homelab-alerts`. Sicherungen und Updates haben eigene Themen (`homelab-backups`, `homelab-updates`). Formatiert werden die Alerts mit der eingebauten Vorlage von ntfy für den Alertmanager (`?template=alertmanager`), ein Zusatzdienst ist nicht nötig.
+
+**Priorität:** Die Priorität jeder Meldung richtet sich danach, wann gehandelt werden muss. Das gilt für alle Absender, nicht nur für den Alertmanager.
+
+| Priorität | Bedeutung | Verwendung |
+|---|---|---|
+| `urgent` (5) | sofort, ein Host oder wichtiger Dienst ist ausgefallen | Alerts mit Severity `critical` |
+| `high` (4) | heute noch | frei, vorgesehen für Sicherungen (etwa Sicherung fehlgeschlagen) |
+| `default` (3) | bei Gelegenheit ansehen | Alerts mit Severity `warning` |
+| `low` (2) | nur zur Kenntnis | etwa erfolgreich eingespielte Updates, falls überhaupt gewünscht |
+| `min` (1) | eigentlich nur Protokoll | derzeit nicht genutzt |
+
+Beim Alertmanager ergibt sich die Priorität aus der Serverity. Er hat zwei Empfänger: `ntfy-alerts` schickt mit `default`, `ntfy-alerts-critical` nur die Alerts mit Serverity `critical` und mit mit `urgent`. Beide schreiben ins selbe Thema. Die Entwarnung eines kritischen Alerts kommt ebenfalls mit `urgent`.
+
+**Gruppierung:** Der Alertmanager bündelt nach Alert und Host (`group_by: ['alertname', 'instance']`). Jede Regel je Host kommt als eigene Push-Nachricht, ein neuer Alert wartet nicht hinter einem bereits gemeldeten. Eine neue meldung geht nach 30 Sekunden raus. Bleibt ein Alert bestehen, kommt alle 4 Stunden eine Erinnerung.
 
 **Anmeldung und Rechte:** Ohne Anmeldung darf niemand lesen oder schreiben (`auth-default-access: deny-all`). Jeder Absender hat einen eigenen Benutzer mit Token und darf nur schreiben. Der Benutzer für das Handy darf nur lesen und hat keine Admin-Rechte. Benutzer und Rechte werden per Kommandozeile auf `mon01` verwaltet. Das Token des Alertmanagers liegt in einer eigenen Datei und nicht in dessen Konfiguration.
 
@@ -226,7 +244,7 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 ## 📝 Offene Punkte
 
 - Alert, wenn eine Sicherung fehlschlägt oder zu alt ist
-- Selbstüberwachung von `mon01` ausbauen (CPU, RAM, Zustand der Container) und eine Meldung von außen, wenn `mon01` ganz ausfällt
+- Zustand der Container auf `mon01` überwachen und eine Meldung von außen, wenn `mon01` ganz ausfällt
 - `proxy01` und `cal01` mit Dienst-Prüfung überwachen (Blackbox-Exporter)
 - `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA gibt
 - Loki meldet dauerhaft "Ingester not ready", obwohl Logs ankommen. Ursache klären
