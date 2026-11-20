@@ -183,9 +183,9 @@ ntfy läuft auf `mon01` neben dem Alertmanager und nicht auf `pve01`. Bei einem 
 | `low` (2) | nur zur Kenntnis | etwa erfolgreich eingespielte Updates, falls überhaupt gewünscht |
 | `min` (1) | eigentlich nur Protokoll | derzeit nicht genutzt |
 
-Beim Alertmanager ergibt sich die Priorität aus der Serverity. Er hat zwei Empfänger: `ntfy-alerts` schickt mit `default`, `ntfy-alerts-critical` nur die Alerts mit Serverity `critical` und mit mit `urgent`. Beide schreiben ins selbe Thema. Die Entwarnung eines kritischen Alerts kommt ebenfalls mit `urgent`.
+Beim Alertmanager ergibt sich die Priorität aus der Severity. Er hat zwei Empfänger: `ntfy-alerts` schickt mit `default`, `ntfy-alerts-critical` nur die Alerts mit Severity `critical` und mit `urgent`. Beide schreiben ins selbe Thema. Die Entwarnung eines kritischen Alerts kommt ebenfalls mit `urgent`.
 
-**Gruppierung:** Der Alertmanager bündelt nach Alert und Host (`group_by: ['alertname', 'instance']`). Jede Regel je Host kommt als eigene Push-Nachricht, ein neuer Alert wartet nicht hinter einem bereits gemeldeten. Eine neue meldung geht nach 30 Sekunden raus. Bleibt ein Alert bestehen, kommt alle 4 Stunden eine Erinnerung.
+**Gruppierung:** Der Alertmanager bündelt nach Alert und Host (`group_by: ['alertname', 'instance']`). Jede Regel je Host kommt als eigene Push-Nachricht, ein neuer Alert wartet nicht hinter einem bereits gemeldeten. Eine neue Meldung geht nach 30 Sekunden raus. Bleibt ein Alert bestehen, kommt alle 4 Stunden eine Erinnerung.
 
 **Anmeldung und Rechte:** Ohne Anmeldung darf niemand lesen oder schreiben (`auth-default-access: deny-all`). Jeder Absender hat einen eigenen Benutzer mit Token und darf nur schreiben. Der Benutzer für das Handy darf nur lesen und hat keine Admin-Rechte. Benutzer und Rechte werden per Kommandozeile auf `mon01` verwaltet. Das Token des Alertmanagers liegt in einer eigenen Datei und nicht in dessen Konfiguration.
 
