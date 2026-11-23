@@ -11,6 +11,9 @@
 		propagation_timeout -1
 	}
 
+	# Jede Anfrage als JSON ins Journal, von dort per Alloy an Loki
+	log
+
 	# Kalender, Aufgaben und Kontakte (Radicale auf cal01)
 	@cal host cal.home.<domain>
 	handle @cal {

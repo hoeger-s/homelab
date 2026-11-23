@@ -1,6 +1,6 @@
 # mon01 - Monitoring Host
 
-Stand: 20.11.2026
+Stand: 23.11.2026
 
 
 Zentrale Monitoring-Instanz des Homelabs. Trägt den kompletten Monitoring-Stack als Docker Compose (Prometheus, Alertmanager, ntfy, Grafana, Loki, Alloy, PVE-Exporter, Node-Exporter) für sich selbst und `pve01`. `mon01` läuft rund um die Uhr und startet nach einem Stromausfall per BIOS-Einstellung wieder von selbst.
@@ -79,7 +79,7 @@ Konfiguration: [`configs/mon01/monitoring/`](../configs/mon01/monitoring/)
     - [`ufw-docker`](https://github.com/chaifeng/ufw-docker) installiert, siehe unten
 - Sicherheitsupdates automatisch, siehe unten
 
-**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana und ntfy von `proxy01` und Loki von `pve01` erreichbar sein müssen.
+**`ufw-docker`:** Docker schreibt die Port-Freigaben seiner Container direkt in die `FORWARD`-Kette von `iptables`. Normale `ufw`-Regeln greifen dort nicht. Jeder veröffentlichte Container-Port wäre trotz `ufw` offen. `ufw-docker` hängt sich davor und lässt nur durch, was per `ufw route allow` erlaubt ist. Die Ports nur an `127.0.0.1` zu binden, reicht hier nicht, da Grafana und ntfy von `proxy01` und Loki von `pve01`, `proxy01` und `cal01` erreichbar sein müssen.
 
 Die Vorlage von `ufw-docker` gibt alle privaten Netze pauschal frei (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Damit wirken die Regeln nur gegen Zugriffe aus dem Internet, nicht aus dem Heimnetz. In `/etc/ufw/after.rules` bleibt deshalb nur `172.16.0.0/12` freigegeben, das sind die Docker-Netze selbst. Ohne diese Zeile kämen Prometheus und PVE-Exporter nicht mehr an `pve01` heran.
 
@@ -93,8 +93,10 @@ Konfiguration: [`configs/mon01/ufw/`](../configs/mon01/ufw/)
 | fwd | ALLOW | tcp | 2586 | 10.0.40.10 | ntfy, nur für `proxy01` |
 | fwd | ALLOW | tcp | 3000 | 10.0.40.10 | Grafana, nur für `proxy01` |
 | fwd | ALLOW | tcp | 3100 | 10.0.99.10 | Logs von `pve01` an Loki |
+| fwd | ALLOW | tcp | 3100 | 10.0.40.10 | Logs von `proxy01` an Loki |
+| fwd | ALLOW | tcp | 3100 | 10.0.40.30 | Logs von `cal01` an Loki |
 
-Im Gateway kommen dazu die Regeln "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md).
+Im Gateway kommen dazu die Regeln "mon01 zu pve01" und "pve01 zu mon01", siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md). Für `proxy01` und `cal01` braucht es keine, sie liegen im selben VLAN wie `mon01`.
 
 > Grafana (3000), Loki (3100) und ntfy (2586) sind die einzigen veröffentlichten Ports. Prometheus, Alertmanager, PVE-Exporter und Node-Exporter laufen nur im internen Docker-Netz und sind von außen nicht erreichbar. Prometheus ist deshalb nur über Grafana oder per `docker exec` einsehbar.
 
@@ -196,9 +198,9 @@ Konfiguration: [`configs/mon01/monitoring/ntfy/server.yml`](../configs/mon01/mon
 
 ## 📜 Logging (Loki & Alloy)
 
-Alloy liefert die Logs von `pve01` und `mon01` an Loki. Loki speichert sie als Dateien im Docker-Volume `loki-data` und bewahrt sie 7 Tage auf. Auf `mon01` ist Alloy ein eigener Container und liest das Journal des Hosts (nur lesend). Auf `pve01` ist Alloy direkt auf dem Host installiert und schickt das Journal übers Netz an Loki.
+Alloy liefert die Logs von `pve01`, `mon01`, `proxy01` und `cal01` an Loki. Loki speichert sie als Dateien im Docker-Volume `loki-data` und bewahrt sie 7 Tage auf. Auf `mon01` ist Alloy ein eigener Container und liest das Journal des Hosts (nur lesend). Auf den drei anderen Hosts ist Alloy direkt installiert und schickt das Journal übers Netz an Loki.
 
-Alloy vergibt auf beiden Hosts dieselben Labels: `host` (`mon01`, `pve01`), `job` (`systemd-journal`), `unit` (z. B. `docker.service`) und `level` (Schweregrad aus dem Journal: `info`, `notice`, `warning`, `error` ...). Warum nur diese vier und wie sie technisch gesetzt werden, steht in [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-logging-alloy).
+Alloy vergibt auf allen Hosts dieselben Labels: `host` (`mon01`, `pve01`, `proxy01`, `cal01`), `job` (`systemd-journal`), `unit` (z. B. `docker.service`) und `level` (Schweregrad aus dem Journal: `info`, `notice`, `warning`, `error` ...). Warum nur diese vier und wie sie technisch gesetzt werden, steht in [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-logging-alloy). Bei Caddy auf `proxy01` kommt `level` aus der Logzeile selbst statt aus dem Journal, siehe [proxy01 - Reverse Proxy](proxy01%20-%20Reverse%20Proxy.md#-logging).
 
 **Dashboard "Log Overview":**
 
@@ -213,6 +215,8 @@ sum by (host) (count_over_time({job="systemd-journal", level=~"emerg|alert|crit|
 ```
 
 Gezählt wird über das Label `level`, nicht per Textsuche nach "error", "failed" oder "critical" in den Logzeilen. Eine Textsuche würde auch harmlose Zeilen mitzählen, die zufällig eines dieser Wörter enthalten. So zählt nur, was das System selbst als Fehler einstuft. Warnungen gehören bei Bedarf in ein eigenes Panel, nicht in die Fehlerkurve.
+
+Direkt nach dem Start meldet Loki für einige Sekunden "empty ring" und ist noch nicht bereit. Der Ingester (der Teil von Loki, der neue Einträge annimmt) meldet sich erst kurz nach dem Start an, daher ist diese Meldung normal.
 
 Konfiguration: [`configs/mon01/monitoring/alloy/config.alloy`](../configs/mon01/monitoring/alloy/config.alloy), [`configs/mon01/monitoring/loki/loki-config.yml`](../configs/mon01/monitoring/loki/loki-config.yml)
 
@@ -247,4 +251,3 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 - Zustand der Container auf `mon01` überwachen und eine Meldung von außen, wenn `mon01` ganz ausfällt
 - `proxy01` und `cal01` mit Dienst-Prüfung überwachen (Blackbox-Exporter)
 - `verify_ssl: false` beim PVE-Exporter ablösen, sobald es eine interne CA gibt
-- Loki meldet dauerhaft "Ingester not ready", obwohl Logs ankommen. Ursache klären

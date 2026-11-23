@@ -1,0 +1,56 @@
+loki.relabel "journal_proxy01" {
+  forward_to = []
+
+  rule {
+    target_label = "job"
+    replacement  = "systemd-journal"
+  }
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+}
+
+loki.source.journal "proxy01" {
+  max_age       = "12h"
+  labels        = {
+    host = "proxy01",
+  }
+  relabel_rules = loki.relabel.journal_proxy01.rules
+  forward_to    = [loki.process.caddy_level.receiver]
+}
+
+// Caddy schreibt den Schweregrad ins JSON, nicht ins Journal.
+// Ohne diesen Block hätte jede Caddy-Zeile level="info".
+loki.process "caddy_level" {
+  forward_to = [loki.write.default.receiver]
+
+  stage.match {
+    selector = "{unit=\"caddy.service\"}"
+
+    stage.json {
+      expressions = { level = "" }
+    }
+
+    stage.template {
+      source   = "level"
+      template = "{{ if eq .Value \"warn\" }}warning{{ else }}{{ .Value }}{{ end }}"
+    }
+
+    stage.labels {
+      values = { level = "" }
+    }
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://mon01.internal:3100/loki/api/v1/push"
+  }
+}

@@ -1,6 +1,6 @@
 # 🛡️ Stefans Homelab
 
-Stand: 20.11.2026
+Stand: 23.11.2026
 
 Dieses Repository dokumentiert den schrittweisen Aufbau meines privaten Homelabs. Die Konfigurationsdateien der Server liegen versioniert mit im Repo.
 
@@ -101,7 +101,7 @@ Details: [cal01 - Kalender Server](docs/cal01%20-%20Kalender%20Server.md)
 
 # 📈 Monitoring & Logging
 
-Prometheus sammelt die Metriken von `pve01` samt Containern und von `mon01`, Grafana stellt sie dar. Alert-Regeln schlagen an, wenn CPU, RAM, GPU oder Storage knapp werden. Ausgelöste Alerts kommen über ntfy als Push-Nachricht aufs Handy. Ihre Inhalte bleiben dabei im Homelab. Die Logs beider Hosts laufen zentral in Loki zusammen und lassen sich nach Host, Dienst und Schweregrad filtern.
+Prometheus sammelt die Metriken von `pve01` samt Containern und von `mon01`, Grafana stellt sie dar. Alert-Regeln schlagen an, wenn CPU, RAM, GPU oder Storage knapp werden. Ausgelöste Alerts kommen über ntfy als Push-Nachricht aufs Handy. Ihre Inhalte bleiben dabei im Homelab. Die Logs von `pve01`, `mon01`, `proxy01` und `cal01` laufen zentral in Loki zusammen und lassen sich nach Host, Dienst und Schweregrad filtern.
 
 ![Grafana-Dashboard](assets/screenshots/Grafana-Dashboard_v3.png)
 <sub>*Grafana-Dashboard "Homelab Overview"*</sub>
@@ -155,8 +155,8 @@ homelab/
 ├── configs/
 │   ├── pve01/              # Netzwerk, Proxmox-Firewall (auch für die Container), Backup-Job, Host-Sicherung, Alloy
 │   ├── mon01/              # kompletter Monitoring-Stack (= /opt/monitoring), Host-Sicherung, automatische Updates
-│   ├── proxy01/            # Caddyfile, automatische Updates
-│   └── cal01/              # Radicale, automatische Updates
+│   ├── proxy01/            # Caddyfile, Alloy, automatische Updates
+│   └── cal01/              # Radicale, Alloy, automatische Updates
 └── docs/                   # Doku je Host und lab-weite Themen, siehe unten
 ```
 
@@ -170,8 +170,6 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 **Mit dem, was läuft**
 - [ ] Alert, wenn eine Sicherung fehlschlägt oder älter als ein Tag ist
 - [ ] Abgebrochene Übertragung der Sicherung von `mon01` erkennbar machen
-- [ ] Logs von `proxy01` und `cal01` per Alloy an Loki schicken
-- [ ] Meldung "Ingester not ready" in Loki klären
 - [ ] Eine Wiederherstellung komplett durchspielen und dokumentieren
 - [ ] Ausgehende Regeln der Container enger fassen
 - [ ] IDS/IPS am Gateway, erst im Meldemodus
@@ -183,6 +181,8 @@ Die Roadmap folgt dem Grundsatz **erst sehen, dann absichern, dann ausbauen**. N
 - [x] Docker-Images auf `mon01` auf feste Versionen pinnen
 - [x] Ausstehende Updates einspielen, Nesting für die Container
 - [x] Sicherheitsupdates der Container und von `mon01` automatisch einspielen, alles Weitere an einem festen monatlichen Patchday
+- [x] Logs von `proxy01` und `cal01` per Alloy an Loki schicken
+- [x] Meldung "Ingester not ready" in Loki klären
 
 **Mit neuen Diensten**
 - [ ] Dienst-Prüfung für `proxy01` und `cal01` mit Alert bei Ausfall und bei bald ablaufendem Zertifikat (Blackbox-Exporter)

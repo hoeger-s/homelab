@@ -1,6 +1,6 @@
 # proxy01 - Reverse Proxy
 
-Stand: 19.11.2026
+Stand: 23.11.2026
 
 Zentraler Reverse Proxy des Homelabs. Caddy nimmt alle Anfragen an `*.home.<domain>` entgegen und leitet sie an den jeweiligen Dienst weiter. Endgeräte bauen eine verschlüsselte Verbindung über TLS (Transport Layer Security) nur bis zu `proxy01` auf. Caddy weist sich dabei mit einem Wildcard-Zertifikat von Let's Encrypt aus, dem alle Geräte von sich aus vertrauen. Kein Dienst ist aus dem Internet erreichbar, Zugriff von unterwegs nur über das WireGuard-VPN.
 
@@ -62,6 +62,7 @@ Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht
 | out | ACCEPT | tcp | 5232 | `cal01` | Radicale (Weiterleitung) |
 | out | ACCEPT | tcp | 2586 | `mon01` | ntfy (Weiterleitung) |
 | out | ACCEPT | tcp | 3000 | `mon01` | Grafana (Weiterleitung) |
+| out | ACCEPT | tcp | 3100 | `mon01` | Logs an Loki |
 
 Quellen und Ziele sind Aliase aus `cluster.fw` (siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-in-proxmox)).
 
@@ -128,7 +129,15 @@ Dazu die Weboberfläche des KI-Assistenten (eigenes Projekt, nicht in diesem Rep
 
 ## 📜 Logging
 
-Die Logs von `proxy01` gehen noch nicht an Loki auf `mon01`. Geplant ist Alloy wie auf `pve01`, siehe Offene Punkte.
+Alloy liest das systemd-Journal und schickt es an Loki auf `mon01` (`mon01.internal:3100`). Die Labels und ihr Aufbau sind dieselben wie auf `pve01`, siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-logging-alloy).
+
+**Zugriffslog:** Caddy schreibt jede Anfrage als JSON ins Journal (`log` im Caddyfile), von dort geht sie mit den übrigen Logs an Loki. So lässt sich nachvollziehen, wer wann welchen Dienst aufgerufen hat, auch über das VPN. Cookies und Anmeldedaten im Header schwärzt Caddy von sich aus.
+
+**Schweregrad:** Ob eine Zeile Info, Warnung oder Fehler ist, steht bei Caddy nur im JSON, nicht als Priorität im Journal. Im Journal steht deshalb jede Caddy-Zeile als `info`. Ohne Abhilfe sähe die Fehler-Rate im Dashboard "Log Overview" Warnungen und Fehler von Caddy nie. Ein zusätzlicher Block in Alloy (`loki.process`) holt sich für `caddy.service` das Feld `level` aus dem JSON und setzt damit das Label. Aus Caddys `warn` wird dabei `warning`, damit die Werte zu denen aus dem Journal passen. Alle anderen Dienste behalten den Schweregrad aus dem Journal.
+
+Konfiguration: [`configs/proxy01/alloy/config.alloy`](../configs/proxy01/alloy/config.alloy)
+
+> Zur ausgehenden Regel 3100 in `120.fw` (siehe oben) gehört auf `mon01` die passende `ufw`-Freigabe. Eine Regel im Gateway entfällt, da `proxy01` und `mon01` im selben VLAN liegen.
 
 
 ## 💾 Backup
@@ -143,4 +152,3 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 - Authelia vor die Dienste setzen (Anmeldung mit MFA)
 - Strecke Proxy -> Dienst mit einer internen CA verschlüsseln
 - Dienst-Prüfung von `proxy01` mit Alert bei Ausfall und bei bald ablaufendem Zertifikat (Blackbox-Exporter, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md))
-- Logs per Alloy an Loki auf `mon01` schicken

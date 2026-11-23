@@ -1,6 +1,6 @@
 # Updates & Patchmanagement
 
-Stand: 17.11.2026
+Stand: 23.11.2026
 
 Wie Hosts, Container, Docker-Images und Netzwerkgeräte des Homelabs aktuell gehalten werden. Welche Pakete und Versionen auf dem einzelnen Host laufen, steht in dessen Doku.
 
@@ -36,7 +36,7 @@ Die Updates laufen bewusst nach der nächtlichen Sicherung der Hosts (02:30) und
 
 **Bewusst nicht automatisch:**
 
-- Pakete aus fremden Repos, etwa Docker auf `mon01` und Caddy auf `proxy01`. Sie bringen mit neuen Versionen auch neue Funktionen und geänderte Einstellungen mit
+- Pakete aus fremden Repos, etwa Docker auf `mon01`, Caddy auf `proxy01` und Alloy auf `pve01`, `proxy01` und `cal01`. Sie bringen mit neuen Versionen auch neue Funktionen und geänderte Einstellungen mit
 - die Docker-Images des Monitoring-Stacks, siehe unten
 - `pve01` selbst, siehe unten
 

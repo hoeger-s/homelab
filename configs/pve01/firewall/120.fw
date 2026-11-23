@@ -19,3 +19,4 @@ OUT ACCEPT -p tcp -dport 443 -log nolog # HTTPS (Updates, Zertifikate, Weiterlei
 OUT ACCEPT -dest dc/cal01 -p tcp -dport 5232 -log nolog # Radicale auf cal01 (Weiterleitung)
 OUT ACCEPT -dest dc/mon01 -p tcp -dport 2586 -log nolog # ntfy auf mon01 (Weiterleitung)
 OUT ACCEPT -dest dc/mon01 -p tcp -dport 3000 -log nolog # Grafana auf mon01 (Weiterleitung)
+OUT ACCEPT -dest dc/mon01 -p tcp -dport 3100 -log nolog # Logs an Loki auf mon01

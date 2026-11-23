@@ -1,6 +1,6 @@
 # Netzwerk & Sicherheit
 
-Stand: 19.11.2026
+Stand: 23.11.2026
 
 Wie das Heimnetz aufgeteilt ist, wer wohin darf und warum.
 
@@ -99,7 +99,7 @@ Es gibt also drei Namensräume:
 | `.internal` | `pve01.internal` | Rechnernamen im Heimnetz, auch für die Wege zwischen den Servern (z. B. Prometheus -> pve01) |
 | Adressen | `10.0.99.10` | nur in Firewall-Regeln, die nach Adressen filtern (Netzwerklisten im Gateway, Aliase in Proxmox, `ufw`) |
 
-Ändert sich die Adresse eines Servers, bleiben Reverse Proxy, Prometheus, Alloy und Host-Sicherung unberührt. Nachzuziehen sind der DNS-Eintrag und die Netzwerkliste im Gateway sowie der Alias in Proxmox. Nur `ufw` auf `mon01` kennt keine Aliase, dort stehen die Adressen von `proxy01` und `pve01` direkt in den Regeln.
+Ändert sich die Adresse eines Servers, bleiben Reverse Proxy, Prometheus, Alloy und Host-Sicherung unberührt. Nachzuziehen sind der DNS-Eintrag und die Netzwerkliste im Gateway sowie der Alias in Proxmox. Nur `ufw` auf `mon01` kennt keine Aliase, dort stehen die Adressen von `proxy01`, `cal01` und `pve01` direkt in den Regeln.
 
 
 ## 🧱 Firewall im Gateway (Zonen)

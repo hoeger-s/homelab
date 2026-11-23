@@ -1,6 +1,6 @@
 # cal01 - Kalender Server
 
-Stand: 19.11.2026
+Stand: 23.11.2026
 
 Radicale als Server für Kalender, Aufgaben und Kontakte (CalDAV/CardDAV). iOS-Geräte und Thunderbird greifen über den Reverse Proxy darauf zu.
 
@@ -57,8 +57,9 @@ Die Proxmox-Firewall filtert auf `pve01`, bevor ein Paket den Container erreicht
 | out | ACCEPT | udp/tcp | 53 | any | DNS |
 | out | ACCEPT | udp | 123 | any | Zeit (NTP) |
 | out | ACCEPT | tcp | 80, 443 | any | Updates |
+| out | ACCEPT | tcp | 3100 | `mon01` | Logs an Loki |
 
-Quellen sind Aliase aus `cluster.fw` (siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-in-proxmox)).
+Quellen und Ziele sind Aliase aus `cluster.fw` (siehe [Netzwerk & Sicherheit](Netzwerk%20&%20Sicherheit.md#-firewall-in-proxmox)).
 
 Regeldatei: [`configs/pve01/firewall/121.fw`](../configs/pve01/firewall/121.fw)
 
@@ -109,8 +110,11 @@ Konfiguration: [`configs/cal01/radicale/config`](../configs/cal01/radicale/confi
 
 ## 📜 Logging
 
-Die Logs von `cal01` gehen noch nicht an Loki auf `mon01`. Geplant ist Alloy wie auf `pve01`, siehe Offene Punkte.
+Alloy liest das systemd-Journal und schickt es an Loki auf `mon01` (`mon01.internal:3100`). Die Labels und ihr Aufbau sind dieselben wie auf `pve01`, siehe [pve01 - Proxmox Host](pve01%20-%20Proxmox%20Host.md#-logging-alloy).
 
+Konfiguration: [`configs/cal01/alloy/config.alloy`](../configs/cal01/alloy/config.alloy)
+
+> Zur ausgehenden Regel 3100 in `121.fw` (siehe oben) gehört auf `mon01` die passende `ufw`-Freigabe. Eine Regel im Gateway entfällt, da `cal01` und `mon01` im selben VLAN liegen.
 
 ## 💾 Backup
 
@@ -123,4 +127,3 @@ Ablauf und Wiederherstellung: [Backup & Wiederherstellung](Backup%20&%20Wiederhe
 
 - Strecke Proxy -> Radicale mit einer internen CA (Certificate Authority) verschlüsseln
 - Dienst-Prüfung von `cal01` mit Alert bei Ausfall (Blackbox-Exporter, siehe [mon01 - Monitoring Host](mon01%20-%20Monitoring%20Host.md))
-- Logs per Alloy an Loki auf `mon01` schicken
